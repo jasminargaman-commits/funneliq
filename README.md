@@ -2,7 +2,7 @@
 
 Marketing-intelligence tool for Northbound Media's funnel data — first of three final projects. Full brief: [`FunnelIQ_Assignment.html`](./FunnelIQ_Assignment.html).
 
-**Status: early scaffolding.** Architecture and leakage decisions are locked, this repo is live on GitHub, and a Supabase project is provisioned with `schema.sql` applied and real data loaded (3,490 rows, deduped). Login screen, Railway deploy, and the six work packages are not yet built.
+**Status: early scaffolding.** Architecture and leakage decisions are locked, this repo is live on GitHub, a Supabase project is provisioned with `schema.sql` applied and real data loaded (3,490 rows, deduped), and a minimal Railway skeleton is deployed and auto-deploying on every push to `main`. Login screen and the six work packages are not yet built.
 
 Repo: https://github.com/jasminargaman-commits/funneliq
 
@@ -39,4 +39,4 @@ Repo: https://github.com/jasminargaman-commits/funneliq
 
 ## Live URL
 
-https://funneliq-api-production-15ca.up.railway.app — skeleton only so far (`/` and `/health`). Deployed via Railway, connected to this GitHub repo for auto-deploy on push to `main`.
+https://funneliq-api-production-15ca.up.railway.app — skeleton only so far (`/` and `/health`). Deployed via Railway (`app/main.py`, FastAPI, prediction-only per the architecture decision — no Supabase keys on this service). Connected to this GitHub repo; auto-deploy on push to `main` is verified working (confirmed via two consecutive real pushes triggering builds with no manual step).
