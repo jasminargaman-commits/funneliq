@@ -3,6 +3,10 @@ pandas==3.0.5
 python-dotenv==1.2.3
 supabase==2.31.0
 
+# API (Railway service)
+fastapi==0.141.1
+uvicorn==0.52.4
+
 # Notebooks (writing / executing FunnelIQ_Decisions_Explained.ipynb, 02_EDA_and_Cleaning.ipynb)
 matplotlib==3.11.1
 nbformat==5.11.1
