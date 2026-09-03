@@ -39,4 +39,4 @@ Repo: https://github.com/jasminargaman-commits/funneliq
 
 ## Live URL
 
-_Not yet deployed._
+https://funneliq-api-production-15ca.up.railway.app — skeleton only so far (`/` and `/health`). Deployed via Railway, connected to this GitHub repo for auto-deploy on push to `main`.
