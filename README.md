@@ -2,7 +2,7 @@
 
 Marketing-intelligence tool for Northbound Media's funnel data — first of three final projects. Full brief: [`FunnelIQ_Assignment.html`](./FunnelIQ_Assignment.html).
 
-**Status: early scaffolding.** Architecture and leakage decisions are locked, this repo is live on GitHub, and a Supabase project is provisioned with `schema.sql` applied and verified. Login screen, load script, Railway deploy, and the six work packages are not yet built.
+**Status: early scaffolding.** Architecture and leakage decisions are locked, this repo is live on GitHub, and a Supabase project is provisioned with `schema.sql` applied and real data loaded (3,490 rows, deduped). Login screen, Railway deploy, and the six work packages are not yet built.
 
 Repo: https://github.com/jasminargaman-commits/funneliq
 
@@ -23,20 +23,19 @@ Repo: https://github.com/jasminargaman-commits/funneliq
 
 `funnel_marketing_data.csv` — 3,500 rows, one row per customer/campaign record. See the notebooks above for the full column reference and data-quality findings.
 
-**Not committed to the repo** (excluded via `.gitignore` as a data dump, per project guidelines) — place a local copy in the project root before running the notebooks. Once the Supabase pillar is built, the canonical copy will live in the database instead.
+**Not committed to the repo** (excluded via `.gitignore` as a data dump, per project guidelines) — place a local copy in the project root before running the notebooks or the load script. The canonical copy now lives in Supabase (`funnel_records`, 3,490 rows — 10 exact duplicates dropped by [`scripts/load_data.py`](./scripts/load_data.py)).
 
 ## Local setup
 
-Not fully defined yet (no dependency list or load script exist). So far:
-
 1. Clone the repo, place a local copy of `funnel_marketing_data.csv` in the project root (see [Dataset](#dataset)).
-2. Create a `.env` (never committed — see `.gitignore`) with:
+2. `python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt`
+3. Create a `.env` (never committed — see `.gitignore`) with:
    ```
    SUPABASE_URL=https://rvyxujlbqiiiydguehve.supabase.co
    SUPABASE_ANON_KEY=<Project Settings → API → anon/public key>
    SUPABASE_SERVICE_ROLE_KEY=<Project Settings → API → service_role key — local use only, never ship this>
    ```
-3. Supabase project (`funneliq`, `eu-central-1`) is already provisioned with `schema.sql` applied — no need to re-run it unless the schema changes.
+4. Supabase project (`funneliq`, `eu-central-1`) is already provisioned with `schema.sql` applied and data loaded — no need to re-run `scripts/load_data.py` unless the CSV changes (it's safe to re-run: truncates then reloads, so it never duplicates rows).
 
 ## Live URL
 
