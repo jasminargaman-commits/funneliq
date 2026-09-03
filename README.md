@@ -2,7 +2,7 @@
 
 Marketing-intelligence tool for Northbound Media's funnel data — first of three final projects. Full brief: [`FunnelIQ_Assignment.html`](./FunnelIQ_Assignment.html).
 
-**Status: early scaffolding.** Architecture and leakage decisions are locked, and this repo is live on GitHub. Supabase/Railway setup and the six work packages are not yet built.
+**Status: early scaffolding.** Architecture and leakage decisions are locked, this repo is live on GitHub, and a Supabase project is provisioned with `schema.sql` applied and verified. Login screen, load script, Railway deploy, and the six work packages are not yet built.
 
 Repo: https://github.com/jasminargaman-commits/funneliq
 
@@ -27,7 +27,16 @@ Repo: https://github.com/jasminargaman-commits/funneliq
 
 ## Local setup
 
-_Not yet defined — no repo, environment, or dependency list exists yet. This section will cover cloning, installing dependencies, and required environment variables once the GitHub/Supabase/Railway pillars are set up._
+Not fully defined yet (no dependency list or load script exist). So far:
+
+1. Clone the repo, place a local copy of `funnel_marketing_data.csv` in the project root (see [Dataset](#dataset)).
+2. Create a `.env` (never committed — see `.gitignore`) with:
+   ```
+   SUPABASE_URL=https://rvyxujlbqiiiydguehve.supabase.co
+   SUPABASE_ANON_KEY=<Project Settings → API → anon/public key>
+   SUPABASE_SERVICE_ROLE_KEY=<Project Settings → API → service_role key — local use only, never ship this>
+   ```
+3. Supabase project (`funneliq`, `eu-central-1`) is already provisioned with `schema.sql` applied — no need to re-run it unless the schema changes.
 
 ## Live URL
 
