@@ -2,7 +2,9 @@
 
 Marketing-intelligence tool for Northbound Media's funnel data — first of three final projects. Full brief: [`FunnelIQ_Assignment.html`](./FunnelIQ_Assignment.html).
 
-**Status: design phase.** Architecture and leakage decisions are locked; repo/Supabase/Railway setup and the six work packages are not yet built.
+**Status: early scaffolding.** Architecture and leakage decisions are locked, and this repo is live on GitHub. Supabase/Railway setup and the six work packages are not yet built.
+
+Repo: https://github.com/jasminargaman-commits/funneliq
 
 ## Architecture
 
@@ -20,6 +22,8 @@ Marketing-intelligence tool for Northbound Media's funnel data — first of thre
 ## Dataset
 
 `funnel_marketing_data.csv` — 3,500 rows, one row per customer/campaign record. See the notebooks above for the full column reference and data-quality findings.
+
+**Not committed to the repo** (excluded via `.gitignore` as a data dump, per project guidelines) — place a local copy in the project root before running the notebooks. Once the Supabase pillar is built, the canonical copy will live in the database instead.
 
 ## Local setup
 
