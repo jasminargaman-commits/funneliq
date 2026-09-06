@@ -2,7 +2,7 @@
 
 Marketing-intelligence tool for Northbound Media's funnel data — first of three final projects. Full brief: [`FunnelIQ_Assignment.html`](./FunnelIQ_Assignment.html).
 
-**Status: early scaffolding.** Architecture and leakage decisions are locked, this repo is live on GitHub, a Supabase project is provisioned with `schema.sql` applied and real data loaded (3,490 rows, deduped), a minimal Railway skeleton is deployed and auto-deploying on every push to `main`, a working Supabase Auth login screen is live, and Package 2 (LTV regression) is trained, compared, and **live in the app** — sign in and get a real prediction. Packages 3–6 are not yet built.
+**Status: early scaffolding.** Architecture and leakage decisions are locked, this repo is live on GitHub, a Supabase project is provisioned with `schema.sql` applied and real data loaded (3,490 rows, deduped), a minimal Railway skeleton is deployed and auto-deploying on every push to `main`, a working Supabase Auth login screen is live, and Packages 2 (LTV regression) and 3 (upsell classification) are trained, compared, and **live in the app** — sign in and get real predictions from both. Packages 4–6 are not yet built.
 
 Repo: https://github.com/jasminargaman-commits/funneliq
 
@@ -18,6 +18,7 @@ Repo: https://github.com/jasminargaman-commits/funneliq
 - [`FunnelIQ_Decisions_Explained.ipynb`](./FunnelIQ_Decisions_Explained.ipynb) — walks through every architecture and leakage decision with reasoning, and reproduces the verification checks (nulls, duplicates, correlations, the `purchased`/`upsell` relationship) against the real dataset.
 - [`02_EDA_and_Cleaning.ipynb`](./02_EDA_and_Cleaning.ipynb) — the Package 1 deliverable: missing-value handling, duplicate handling, correlation analysis against `cumulative_profit`, the `ad_budget` → `num_leads` relationship, and conversion rate by budget tier.
 - [`03_Package2_LTV_Regression.ipynb`](./03_Package2_LTV_Regression.ipynb) — the Package 2 deliverable: XGBoost/LightGBM/CatBoost compared via 5-fold CV on `ltv_months`, feature-importance agreement across the three, and the trained model saved to `models/` for later serving.
+- [`04_Package3_Upsell_Classification.ipynb`](./04_Package3_Upsell_Classification.ipynb) — the Package 3 deliverable: same three models compared via 5-fold stratified CV on `upsell` (filtered to `purchased==1`), class-balance check, a simple business rule vs. the model, and the trained classifier saved to `models/`.
 - [`funneliq_leakage_decisions.md`](./funneliq_leakage_decisions.md) — the leakage section for `REPORT.md`: per-package feature decisions and why.
 
 ## Dataset
@@ -44,19 +45,31 @@ Repo: https://github.com/jasminargaman-commits/funneliq
 ## Modeling
 
 Trained models are saved to `models/` (small `.pkl` files, committed — see the architecture
-decision above) with a `_meta.json` sidecar documenting what's in each one. **Package 2 (LTV
-regression)**: XGBoost, LightGBM, and CatBoost compared via 5-fold CV; CatBoost won (RMSE 2.87
-months vs. a 12.4-month naive baseline, R² 0.946) and is saved as `models/ltv_regressor.pkl`. All
-three models agree `calls_to_closed` is a top driver of customer lifetime — see
-[`03_Package2_LTV_Regression.ipynb`](./03_Package2_LTV_Regression.ipynb) for the full comparison
-and reasoning. **Live in the app**: `POST /predict/ltv` (see below).
+decision above) with a `_meta.json` sidecar documenting what's in each one.
+
+- **Package 2 (LTV regression)**: XGBoost, LightGBM, and CatBoost compared via 5-fold CV; CatBoost
+  won (RMSE 2.87 months vs. a 12.4-month naive baseline, R² 0.946) and is saved as
+  `models/ltv_regressor.pkl`. All three models agree `calls_to_closed` is a top driver of
+  customer lifetime — see
+  [`03_Package2_LTV_Regression.ipynb`](./03_Package2_LTV_Regression.ipynb). **Live**:
+  `POST /predict/ltv`.
+- **Package 3 (upsell classification)**: same three models, 5-fold *stratified* CV on `upsell`
+  (rows filtered to `purchased==1`). Classes are near-balanced (53.7%/46.3%) so no imbalance
+  handling was needed. CatBoost won again on ROC-AUC (0.785); `calls_to_closed` and
+  `customer_acquisition_cost` dominate, the same top feature as Package 2. A simple business rule
+  on those two features reaches 0.70 accuracy vs. the model's 0.755 and a 0.537 baseline — see
+  [`04_Package3_Upsell_Classification.ipynb`](./04_Package3_Upsell_Classification.ipynb). **Live**:
+  `POST /predict/upsell`.
 
 ## Live URL
 
-https://funneliq-api-production-15ca.up.railway.app — a login screen (Supabase Auth, email+password), a dashboard that reads live from `funnel_records` as the signed-in user, and a Package 2 LTV prediction form; `/health` for the health check. Deployed via Railway (`app/main.py` + `static/index.html`).
+https://funneliq-api-production-15ca.up.railway.app — a login screen (Supabase Auth, email+password), a dashboard that reads live from `funnel_records` as the signed-in user, and prediction forms for Packages 2 and 3; `/health` for the health check. Deployed via Railway (`app/main.py` + `static/index.html`).
 
-`POST /predict/ltv` takes a customer's early funnel data (the 15 features listed in `models/ltv_regressor_meta.json`) and returns `{"predicted_ltv_months": ..., "model": "CatBoost"}`. Requires a valid Supabase session — the endpoint calls Supabase's own `/auth/v1/user` to verify the caller's bearer token server-side before predicting; a request with no token or an invalid one gets a 401, never a prediction. Data reads still happen entirely in the browser using the anon key and the user's own session (RLS enforces access there), but a prediction request goes through the API, which is why it needs its own auth check.
+Both prediction endpoints require a valid Supabase session — each calls Supabase's own `/auth/v1/user` to verify the caller's bearer token server-side before predicting; a request with no token or an invalid one gets a 401, never a prediction. Data reads still happen entirely in the browser using the anon key and the user's own session (RLS enforces access there), but a prediction request goes through the API, which is why each needs its own auth check.
+
+- `POST /predict/ltv` — the 15 features in `models/ltv_regressor_meta.json` → `{"predicted_ltv_months": ..., "model": "CatBoost"}`
+- `POST /predict/upsell` — the 14 features in `models/upsell_classifier_meta.json` (a customer who has already purchased) → `{"upsell_probability": ..., "predicted_upsell": true/false, "model": "CatBoost"}`
 
 Connected to this GitHub repo; auto-deploy on push to `main` is verified working.
 
-Tested end-to-end in a real browser (both locally and against this live URL): sign-in, wrong-password error, live RLS-gated data read, sign-out (confirmed a reload afterward doesn't silently restore the session), and the LTV prediction form (matches a direct curl test exactly, and rejects both a missing and an invalid bearer token with 401).
+Tested end-to-end in a real browser (both locally and against this live URL): sign-in, wrong-password error, live RLS-gated data read, sign-out (confirmed a reload afterward doesn't silently restore the session), and both prediction forms (each matches a direct curl test exactly, and each rejects a missing or invalid bearer token with 401).
