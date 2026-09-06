@@ -2,7 +2,7 @@
 
 Marketing-intelligence tool for Northbound Media's funnel data — first of three final projects. Full brief: [`FunnelIQ_Assignment.html`](./FunnelIQ_Assignment.html).
 
-**Status: early scaffolding.** Architecture and leakage decisions are locked, this repo is live on GitHub, a Supabase project is provisioned with `schema.sql` applied and real data loaded (3,490 rows, deduped), a minimal Railway skeleton is deployed and auto-deploying on every push to `main`, a working Supabase Auth login screen is live, Packages 2 (LTV regression), 3 (upsell classification), and 4 (super-customer score) are trained, compared, and **live in the app**, and Package 5 (follow-up dropout analysis) is done with its findings surfaced as a dashboard panel. Package 6 is not yet built.
+**Status: all six work packages complete.** Architecture and leakage decisions are locked, this repo is live on GitHub, a Supabase project is provisioned with `schema.sql` applied and real data loaded (3,490 rows, deduped), a minimal Railway skeleton is deployed and auto-deploying on every push to `main`, a working Supabase Auth login screen is live, Packages 2 (LTV regression), 3 (upsell classification), 4 (super-customer score), and 6 (budget optimization) are trained, compared, and **live in the app**, and Package 5 (follow-up dropout analysis) is done with its findings surfaced as a dashboard panel. Remaining: `REPORT.md`, GitHub Actions CI, and the optional demo recording.
 
 Repo: https://github.com/jasminargaman-commits/funneliq
 
@@ -21,6 +21,7 @@ Repo: https://github.com/jasminargaman-commits/funneliq
 - [`04_Package3_Upsell_Classification.ipynb`](./04_Package3_Upsell_Classification.ipynb) — the Package 3 deliverable: same three models compared via 5-fold stratified CV on `upsell` (filtered to `purchased==1`), class-balance check, a simple business rule vs. the model, and the trained classifier saved to `models/`.
 - [`05_Package4_SuperCustomer_Score.ipynb`](./05_Package4_SuperCustomer_Score.ipynb) — the Package 4 deliverable: a tuned CatBoost classifier on `referred` using only genuinely early-funnel features plus an engineered `budget_tier` categorical, a manual hyperparameter search, and the super-customer profit/CAC profile.
 - [`06_Package5_Followup_Dropout.ipynb`](./06_Package5_Followup_Dropout.ipynb) — the Package 5 deliverable: dropout rate at each follow-up stage, the funnel's structural identity (`followup_5 == closed + not_closed`, zero exceptions), and a recommendation testing the sales manager's "wasted effort past round 3" claim against the data.
+- [`07_Package6_Budget_Optimization.ipynb`](./07_Package6_Budget_Optimization.ipynb) — the Package 6 deliverable: a full-funnel profit model + a typical-funnel-profile-per-budget-level lookup, revealing that `ad_budget` vs. profit is a step function (not a smooth curve) with a sharp sweet spot at ₪2,000, and a simulator comparing the brief's four allocation strategies.
 - [`funneliq_leakage_decisions.md`](./funneliq_leakage_decisions.md) — the leakage section for `REPORT.md`: per-package feature decisions and why.
 
 ## Dataset
@@ -82,17 +83,29 @@ decision above) with a `_meta.json` sidecar documenting what's in each one.
   and spikes at the final stage (29.2%) instead. Recommendation: don't cut follow-ups short — see
   [`06_Package5_Followup_Dropout.ipynb`](./06_Package5_Followup_Dropout.ipynb). Surfaced as a
   static chart + recommendation panel on the dashboard (no serving endpoint needed).
+- **Package 6 (budget optimization)**: `ad_budget` vs. `cumulative_profit` is not a smooth
+  diminishing-returns curve — it's a step function. Expected profit per campaign jumps ~6-10x
+  between the ₪500-1,500 tier and the ₪2,000-5,000 tier, then drops back down for every budget
+  from ₪6,000 to ₪20,000, despite costing more to run. A full-funnel CatBoost regressor (RMSE
+  5,327 vs. a 10,976 baseline) combined with a typical-funnel-profile-per-budget lookup and each
+  budget's empirical purchase rate powers a simulator: for the brief's four ₪50,000 allocation
+  strategies, **25×₪2,000 campaigns wins by ~46x** over the worst option (₪600,108 vs. ₪13,155
+  for 2×₪20k+1×₪10k) — neither concentrating nor maximally spreading wins, hitting the sweet spot
+  size and replicating it does — see
+  [`07_Package6_Budget_Optimization.ipynb`](./07_Package6_Budget_Optimization.ipynb). **Live**:
+  `POST /simulate/budget`.
 
 ## Live URL
 
-https://funneliq-api-production-15ca.up.railway.app — a login screen (Supabase Auth, email+password), a dashboard that reads live from `funnel_records` as the signed-in user, prediction forms for Packages 2, 3, and 4, and a Package 5 dropout-analysis panel; `/health` for the health check. Deployed via Railway (`app/main.py` + `static/index.html`).
+https://funneliq-api-production-15ca.up.railway.app — a login screen (Supabase Auth, email+password), a dashboard that reads live from `funnel_records` as the signed-in user, prediction forms for Packages 2, 3, and 4, a Package 5 dropout-analysis panel, and a Package 6 budget-strategy simulator; `/health` for the health check. Deployed via Railway (`app/main.py` + `static/index.html`).
 
-All three prediction endpoints require a valid Supabase session — each calls Supabase's own `/auth/v1/user` to verify the caller's bearer token server-side before predicting; a request with no token or an invalid one gets a 401, never a prediction. Data reads still happen entirely in the browser using the anon key and the user's own session (RLS enforces access there), but a prediction request goes through the API, which is why each needs its own auth check.
+All prediction/simulation endpoints require a valid Supabase session — each calls Supabase's own `/auth/v1/user` to verify the caller's bearer token server-side before responding; a request with no token or an invalid one gets a 401. Data reads still happen entirely in the browser using the anon key and the user's own session (RLS enforces access there), but these requests go through the API, which is why each needs its own auth check.
 
 - `POST /predict/ltv` — the 15 features in `models/ltv_regressor_meta.json` → `{"predicted_ltv_months": ..., "model": "CatBoost"}`
 - `POST /predict/upsell` — the 14 features in `models/upsell_classifier_meta.json` (a customer who has already purchased) → `{"upsell_probability": ..., "predicted_upsell": true/false, "model": "CatBoost"}`
 - `POST /predict/super_customer` — the 4 early-funnel features in `models/super_customer_classifier_meta.json` (the API engineers `budget_tier` server-side) → `{"super_customer_score": 0-100, "model": "CatBoost"}`
+- `POST /simulate/budget` — a list of `{ad_budget, count}` campaigns (budgets restricted to the 16 levels in `models/budget_profiles.json`) → a per-campaign breakdown plus `total_spend` and `total_expected_profit`
 
 Connected to this GitHub repo; auto-deploy on push to `main` is verified working.
 
-Tested end-to-end in a real browser (both locally and against this live URL): sign-in, wrong-password error, live RLS-gated data read, sign-out (confirmed a reload afterward doesn't silently restore the session), and all three prediction forms (each matches a direct curl test exactly, and each rejects a missing or invalid bearer token with 401).
+Tested end-to-end in a real browser (both locally and against this live URL): sign-in, wrong-password error, live RLS-gated data read, sign-out (confirmed a reload afterward doesn't silently restore the session), and all four prediction/simulation panels (each matches a direct curl test exactly, and each rejects a missing or invalid bearer token with 401). One real bug was caught and fixed this way: a `--green` CSS variable used by both the Package 5 recommendation border and the Package 6 winner bar was never defined in `:root`, so both silently rendered without their intended color — fixed and reverified before deploying.
