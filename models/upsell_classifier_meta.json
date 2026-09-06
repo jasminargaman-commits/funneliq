@@ -1,0 +1,42 @@
+{
+  "package": 3,
+  "target": "upsell",
+  "row_filter": "purchased == 1",
+  "model_type": "CatBoost",
+  "feature_columns": [
+    "ad_budget",
+    "num_leads",
+    "leads_answered",
+    "leads_not_answered",
+    "followup_1",
+    "followup_2",
+    "followup_3",
+    "followup_4",
+    "followup_5",
+    "not_closed",
+    "closed",
+    "calls_to_closed",
+    "calls_to_not_closed",
+    "customer_acquisition_cost"
+  ],
+  "training_row_count": 3163,
+  "cv_folds": 5,
+  "cv_strategy": "StratifiedKFold",
+  "selection_metric": "roc_auc",
+  "cv_metrics": {
+    "accuracy": 0.7546678465014898,
+    "precision": 0.697018282798928,
+    "recall": 0.8328689837709827,
+    "f1": 0.7587230949464242,
+    "roc_auc": 0.7846452765567652
+  },
+  "majority_baseline_accuracy": 0.5365159658552008,
+  "library_versions": {
+    "python": "3.14.5",
+    "scikit-learn": "1.9.0",
+    "xgboost": "3.4.1",
+    "lightgbm": "4.7.0",
+    "catboost": "1.2.10"
+  },
+  "trained_at_utc": "2026-09-06T08:54:02.120634+00:00"
+}

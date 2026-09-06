@@ -42,6 +42,10 @@ _ltv_model = joblib.load(MODELS_DIR / "ltv_regressor.pkl")
 _ltv_meta = json.loads((MODELS_DIR / "ltv_regressor_meta.json").read_text())
 _ltv_features = _ltv_meta["feature_columns"]
 
+_upsell_model = joblib.load(MODELS_DIR / "upsell_classifier.pkl")
+_upsell_meta = json.loads((MODELS_DIR / "upsell_classifier_meta.json").read_text())
+_upsell_features = _upsell_meta["feature_columns"]
+
 
 async def require_user(authorization: str | None = Header(default=None)) -> dict:
     """Verify the caller's Supabase session token. Raises 401 if missing/invalid."""
@@ -77,6 +81,23 @@ class LTVFeatures(BaseModel):
     purchased: float
 
 
+class UpsellFeatures(BaseModel):
+    ad_budget: float
+    num_leads: float
+    leads_answered: float
+    leads_not_answered: float
+    followup_1: float
+    followup_2: float
+    followup_3: float
+    followup_4: float
+    followup_5: float
+    not_closed: float
+    closed: float
+    calls_to_closed: float
+    calls_to_not_closed: float
+    customer_acquisition_cost: float
+
+
 @app.get("/")
 def root():
     return FileResponse(STATIC_DIR / "index.html")
@@ -94,4 +115,17 @@ async def predict_ltv(features: LTVFeatures, user: dict = Depends(require_user))
     return {
         "predicted_ltv_months": round(prediction, 1),
         "model": _ltv_meta["model_type"],
+    }
+
+
+@app.post("/predict/upsell")
+async def predict_upsell(features: UpsellFeatures, user: dict = Depends(require_user)):
+    """Only meaningful for a customer who has already purchased -- see the Package 3
+    leakage decision (models/upsell_classifier_meta.json: row_filter = purchased == 1)."""
+    row = pd.DataFrame([features.model_dump()])[_upsell_features]
+    probability = float(_upsell_model.predict_proba(row)[0][1])
+    return {
+        "upsell_probability": round(probability, 3),
+        "predicted_upsell": probability >= 0.5,
+        "model": _upsell_meta["model_type"],
     }

@@ -107,6 +107,27 @@
   </form>
   <button class="predict-btn" id="predict-btn" style="width:auto; padding:10px 20px;">Predict LTV</button>
   <div id="predict-result" class="predict-result" hidden></div>
+
+  <div class="section-title">Predict upsell likelihood (Package 3 model)</div>
+  <p class="sub" style="margin-top:0;">For a customer who has already purchased, estimate the likelihood they'll buy additional services. Served by a CatBoost model trained offline (see <code>04_Package3_Upsell_Classification.ipynb</code>).</p>
+  <form id="upsell-form" class="field-grid">
+    <div><label for="u_ad_budget">ad_budget</label><input id="u_ad_budget" type="number" value="2500" required></div>
+    <div><label for="u_num_leads">num_leads</label><input id="u_num_leads" type="number" value="36" required></div>
+    <div><label for="u_leads_answered">leads_answered</label><input id="u_leads_answered" type="number" value="24" required></div>
+    <div><label for="u_leads_not_answered">leads_not_answered</label><input id="u_leads_not_answered" type="number" value="12" required></div>
+    <div><label for="u_followup_1">followup_1</label><input id="u_followup_1" type="number" value="19" required></div>
+    <div><label for="u_followup_2">followup_2</label><input id="u_followup_2" type="number" value="14" required></div>
+    <div><label for="u_followup_3">followup_3</label><input id="u_followup_3" type="number" value="11" required></div>
+    <div><label for="u_followup_4">followup_4</label><input id="u_followup_4" type="number" value="10" required></div>
+    <div><label for="u_followup_5">followup_5</label><input id="u_followup_5" type="number" value="7" required></div>
+    <div><label for="u_not_closed">not_closed</label><input id="u_not_closed" type="number" value="5" required></div>
+    <div><label for="u_closed">closed</label><input id="u_closed" type="number" value="2" required></div>
+    <div><label for="u_calls_to_closed">calls_to_closed</label><input id="u_calls_to_closed" type="number" value="2" required></div>
+    <div><label for="u_calls_to_not_closed">calls_to_not_closed</label><input id="u_calls_to_not_closed" type="number" value="4" required></div>
+    <div><label for="u_customer_acquisition_cost">customer_acquisition_cost</label><input id="u_customer_acquisition_cost" type="number" value="1250" required></div>
+  </form>
+  <button class="predict-btn" id="upsell-btn" style="width:auto; padding:10px 20px;">Predict Upsell</button>
+  <div id="upsell-result" class="predict-result" hidden></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -217,6 +238,53 @@
     const result = await resp.json();
     predictResult.innerHTML =
       `Predicted lifetime: <span class="value">${result.predicted_ltv_months} months</span>` +
+      ` <span style="color: var(--muted); font-size: 12px;">(${result.model})</span>`;
+  });
+
+  const upsellBtn = document.getElementById("upsell-btn");
+  const upsellResult = document.getElementById("upsell-result");
+  const upsellFeatureIds = [
+    "ad_budget", "num_leads", "leads_answered", "leads_not_answered",
+    "followup_1", "followup_2", "followup_3", "followup_4", "followup_5",
+    "not_closed", "closed", "calls_to_closed", "calls_to_not_closed",
+    "customer_acquisition_cost",
+  ];
+
+  upsellBtn.addEventListener("click", async () => {
+    upsellResult.hidden = false;
+    upsellResult.textContent = "Predicting...";
+
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (!session) {
+      upsellResult.textContent = "Not signed in.";
+      return;
+    }
+
+    const payload = {};
+    for (const id of upsellFeatureIds) {
+      payload[id] = Number(document.getElementById("u_" + id).value);
+    }
+
+    const resp = await fetch("/predict/upsell", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + session.access_token,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({}));
+      upsellResult.textContent = "Prediction failed: " + (err.detail || resp.statusText);
+      return;
+    }
+
+    const result = await resp.json();
+    const pct = Math.round(result.upsell_probability * 100);
+    const label = result.predicted_upsell ? "Likely to upsell" : "Unlikely to upsell";
+    upsellResult.innerHTML =
+      `${label}: <span class="value">${pct}%</span> probability` +
       ` <span style="color: var(--muted); font-size: 12px;">(${result.model})</span>`;
   });
 
