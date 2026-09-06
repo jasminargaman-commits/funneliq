@@ -2,7 +2,7 @@
 
 Marketing-intelligence tool for Northbound Media's funnel data — first of three final projects. Full brief: [`FunnelIQ_Assignment.html`](./FunnelIQ_Assignment.html).
 
-**Status: early scaffolding.** Architecture and leakage decisions are locked, this repo is live on GitHub, a Supabase project is provisioned with `schema.sql` applied and real data loaded (3,490 rows, deduped), a minimal Railway skeleton is deployed and auto-deploying on every push to `main`, a working Supabase Auth login screen is live, and Packages 2 (LTV regression), 3 (upsell classification), and 4 (super-customer score) are trained, compared, and **live in the app** — sign in and get real predictions from all three. Packages 5–6 are not yet built.
+**Status: early scaffolding.** Architecture and leakage decisions are locked, this repo is live on GitHub, a Supabase project is provisioned with `schema.sql` applied and real data loaded (3,490 rows, deduped), a minimal Railway skeleton is deployed and auto-deploying on every push to `main`, a working Supabase Auth login screen is live, Packages 2 (LTV regression), 3 (upsell classification), and 4 (super-customer score) are trained, compared, and **live in the app**, and Package 5 (follow-up dropout analysis) is done with its findings surfaced as a dashboard panel. Package 6 is not yet built.
 
 Repo: https://github.com/jasminargaman-commits/funneliq
 
@@ -20,6 +20,7 @@ Repo: https://github.com/jasminargaman-commits/funneliq
 - [`03_Package2_LTV_Regression.ipynb`](./03_Package2_LTV_Regression.ipynb) — the Package 2 deliverable: XGBoost/LightGBM/CatBoost compared via 5-fold CV on `ltv_months`, feature-importance agreement across the three, and the trained model saved to `models/` for later serving.
 - [`04_Package3_Upsell_Classification.ipynb`](./04_Package3_Upsell_Classification.ipynb) — the Package 3 deliverable: same three models compared via 5-fold stratified CV on `upsell` (filtered to `purchased==1`), class-balance check, a simple business rule vs. the model, and the trained classifier saved to `models/`.
 - [`05_Package4_SuperCustomer_Score.ipynb`](./05_Package4_SuperCustomer_Score.ipynb) — the Package 4 deliverable: a tuned CatBoost classifier on `referred` using only genuinely early-funnel features plus an engineered `budget_tier` categorical, a manual hyperparameter search, and the super-customer profit/CAC profile.
+- [`06_Package5_Followup_Dropout.ipynb`](./06_Package5_Followup_Dropout.ipynb) — the Package 5 deliverable: dropout rate at each follow-up stage, the funnel's structural identity (`followup_5 == closed + not_closed`, zero exceptions), and a recommendation testing the sales manager's "wasted effort past round 3" claim against the data.
 - [`funneliq_leakage_decisions.md`](./funneliq_leakage_decisions.md) — the leakage section for `REPORT.md`: per-package feature decisions and why.
 
 ## Dataset
@@ -73,10 +74,18 @@ decision above) with a `_meta.json` sidecar documenting what's in each one.
   CAC than everyone else — see
   [`05_Package4_SuperCustomer_Score.ipynb`](./05_Package4_SuperCustomer_Score.ipynb). **Live**:
   `POST /predict/super_customer`.
+- **Package 5 (follow-up dropout, descriptive — no model)**: confirms the funnel is a strict
+  monotonic decline with an exact identity, `followup_5 == closed + not_closed`, holding for all
+  3,490 rows with zero exceptions — meaning every recorded close required completing all five
+  follow-up rounds. Aggregate dropout by stage is *not* the smoothly-increasing curve the sales
+  manager's "wasted effort past round 3" claim implies: it's lowest right after round 3 (10.4%)
+  and spikes at the final stage (29.2%) instead. Recommendation: don't cut follow-ups short — see
+  [`06_Package5_Followup_Dropout.ipynb`](./06_Package5_Followup_Dropout.ipynb). Surfaced as a
+  static chart + recommendation panel on the dashboard (no serving endpoint needed).
 
 ## Live URL
 
-https://funneliq-api-production-15ca.up.railway.app — a login screen (Supabase Auth, email+password), a dashboard that reads live from `funnel_records` as the signed-in user, and prediction forms for Packages 2, 3, and 4; `/health` for the health check. Deployed via Railway (`app/main.py` + `static/index.html`).
+https://funneliq-api-production-15ca.up.railway.app — a login screen (Supabase Auth, email+password), a dashboard that reads live from `funnel_records` as the signed-in user, prediction forms for Packages 2, 3, and 4, and a Package 5 dropout-analysis panel; `/health` for the health check. Deployed via Railway (`app/main.py` + `static/index.html`).
 
 All three prediction endpoints require a valid Supabase session — each calls Supabase's own `/auth/v1/user` to verify the caller's bearer token server-side before predicting; a request with no token or an invalid one gets a 401, never a prediction. Data reads still happen entirely in the browser using the anon key and the user's own session (RLS enforces access there), but a prediction request goes through the API, which is why each needs its own auth check.
 
