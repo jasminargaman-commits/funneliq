@@ -2,13 +2,13 @@
 
 Marketing-intelligence tool for Northbound Media's funnel data — first of three final projects. Full brief: [`FunnelIQ_Assignment.html`](./FunnelIQ_Assignment.html).
 
-**Status: early scaffolding.** Architecture and leakage decisions are locked, this repo is live on GitHub, a Supabase project is provisioned with `schema.sql` applied and real data loaded (3,490 rows, deduped), and a minimal Railway skeleton is deployed and auto-deploying on every push to `main`. Login screen and the six work packages are not yet built.
+**Status: early scaffolding.** Architecture and leakage decisions are locked, this repo is live on GitHub, a Supabase project is provisioned with `schema.sql` applied and real data loaded (3,490 rows, deduped), a minimal Railway skeleton is deployed and auto-deploying on every push to `main`, and a working Supabase Auth login screen is live. The six modeling work packages are not yet built.
 
 Repo: https://github.com/jasminargaman-commits/funneliq
 
 ## Architecture
 
-- **Supabase** — Postgres for the dataset (`funnel_records`, see [`schema.sql`](./schema.sql)) + Supabase Auth for the login screen. Row Level Security is enabled so the database itself enforces that only signed-in users can read data.
+- **Supabase** — Postgres for the dataset (`funnel_records`, see [`schema.sql`](./schema.sql)) + Supabase Auth for the login screen (`static/index.html`). Row Level Security is enabled so the database itself enforces that only signed-in users can read data — verified independently at the REST level (an unauthenticated request returns an empty array, not the data).
 - **Railway API** — prediction only. Loads pre-trained `.pkl` models and serves predictions; never trains at request time.
 - Models are trained **offline**, ahead of time; the deployed server only loads and serves them.
 - The Supabase **service key stays local**, used only for the one-time data-load script — never shipped client-side or to Railway in a way that bypasses RLS.
@@ -36,7 +36,10 @@ Repo: https://github.com/jasminargaman-commits/funneliq
    SUPABASE_SERVICE_ROLE_KEY=<Project Settings → API → service_role key — local use only, never ship this>
    ```
 4. Supabase project (`funneliq`, `eu-central-1`) is already provisioned with `schema.sql` applied and data loaded — no need to re-run `scripts/load_data.py` unless the CSV changes (it's safe to re-run: truncates then reloads, so it never duplicates rows).
+5. FunnelIQ is an internal tool — there's no public sign-up. Provision a team account with `python scripts/create_user.py you@example.com` (uses the service_role key locally to create a pre-confirmed user).
 
 ## Live URL
 
-https://funneliq-api-production-15ca.up.railway.app — skeleton only so far (`/` and `/health`). Deployed via Railway (`app/main.py`, FastAPI, prediction-only per the architecture decision — no Supabase keys on this service). Connected to this GitHub repo; auto-deploy on push to `main` is verified working (confirmed via two consecutive real pushes triggering builds with no manual step).
+https://funneliq-api-production-15ca.up.railway.app — a login screen (Supabase Auth, email+password) plus a minimal dashboard that reads live from `funnel_records` as the signed-in user; `/health` for the health check. Deployed via Railway (`app/main.py` + `static/index.html`; the API itself is prediction-only per the architecture decision and holds no Supabase keys — auth and data reads happen entirely in the browser using the anon key and the user's own session, so RLS does the enforcing). Connected to this GitHub repo; auto-deploy on push to `main` is verified working.
+
+Tested end-to-end in a real browser (both locally and against this live URL): sign-in, wrong-password error, live RLS-gated data read, sign-out, and confirmed a reload after sign-out does not silently restore the session.
