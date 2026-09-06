@@ -45,6 +45,17 @@
   th, td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--line); }
   thead th { background: var(--brand-dark); color: #fff; }
   tbody tr:nth-child(even) { background: var(--band); }
+
+  .section-title { font-size: 15px; font-weight: 700; color: var(--brand-dark); margin: 28px 0 4px; }
+  .field-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; }
+  .field-grid label { font-size: 11px; font-weight: 600; color: var(--ink-soft); margin: 0 0 3px; }
+  .field-grid input { padding: 6px 8px; font-size: 13px; }
+  .predict-btn { margin-top: 14px; }
+  .predict-result {
+    margin-top: 14px; padding: 12px 14px; border-radius: 8px; background: var(--band);
+    border: 1px solid var(--line); font-size: 14px; min-height: 20px;
+  }
+  .predict-result .value { font-size: 22px; font-weight: 700; color: var(--brand-dark); }
 </style>
 </head>
 <body>
@@ -74,6 +85,28 @@
     <thead><tr><th>ad_budget</th><th>num_leads</th><th>closed</th><th>purchased</th><th>upsell</th></tr></thead>
     <tbody id="data-rows"></tbody>
   </table>
+
+  <div class="section-title">Predict customer lifetime (Package 2 model)</div>
+  <p class="sub" style="margin-top:0;">Enter a customer's early funnel data to predict how many months they'll stay. Served by a CatBoost model trained offline (see <code>03_Package2_LTV_Regression.ipynb</code>).</p>
+  <form id="predict-form" class="field-grid">
+    <div><label for="f_ad_budget">ad_budget</label><input id="f_ad_budget" type="number" value="2500" required></div>
+    <div><label for="f_num_leads">num_leads</label><input id="f_num_leads" type="number" value="36" required></div>
+    <div><label for="f_leads_answered">leads_answered</label><input id="f_leads_answered" type="number" value="24" required></div>
+    <div><label for="f_leads_not_answered">leads_not_answered</label><input id="f_leads_not_answered" type="number" value="12" required></div>
+    <div><label for="f_followup_1">followup_1</label><input id="f_followup_1" type="number" value="19" required></div>
+    <div><label for="f_followup_2">followup_2</label><input id="f_followup_2" type="number" value="14" required></div>
+    <div><label for="f_followup_3">followup_3</label><input id="f_followup_3" type="number" value="11" required></div>
+    <div><label for="f_followup_4">followup_4</label><input id="f_followup_4" type="number" value="10" required></div>
+    <div><label for="f_followup_5">followup_5</label><input id="f_followup_5" type="number" value="7" required></div>
+    <div><label for="f_not_closed">not_closed</label><input id="f_not_closed" type="number" value="5" required></div>
+    <div><label for="f_closed">closed</label><input id="f_closed" type="number" value="2" required></div>
+    <div><label for="f_calls_to_closed">calls_to_closed</label><input id="f_calls_to_closed" type="number" value="2" required></div>
+    <div><label for="f_calls_to_not_closed">calls_to_not_closed</label><input id="f_calls_to_not_closed" type="number" value="4" required></div>
+    <div><label for="f_customer_acquisition_cost">customer_acquisition_cost</label><input id="f_customer_acquisition_cost" type="number" value="1250" required></div>
+    <div><label for="f_purchased">purchased (0/1)</label><input id="f_purchased" type="number" min="0" max="1" value="1" required></div>
+  </form>
+  <button class="predict-btn" id="predict-btn" style="width:auto; padding:10px 20px;">Predict LTV</button>
+  <div id="predict-result" class="predict-result" hidden></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -140,6 +173,51 @@
       loginError.textContent = error.message;
     }
     // onAuthStateChange below handles the UI switch on success.
+  });
+
+  const predictBtn = document.getElementById("predict-btn");
+  const predictResult = document.getElementById("predict-result");
+  const featureIds = [
+    "ad_budget", "num_leads", "leads_answered", "leads_not_answered",
+    "followup_1", "followup_2", "followup_3", "followup_4", "followup_5",
+    "not_closed", "closed", "calls_to_closed", "calls_to_not_closed",
+    "customer_acquisition_cost", "purchased",
+  ];
+
+  predictBtn.addEventListener("click", async () => {
+    predictResult.hidden = false;
+    predictResult.textContent = "Predicting...";
+
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (!session) {
+      predictResult.textContent = "Not signed in.";
+      return;
+    }
+
+    const payload = {};
+    for (const id of featureIds) {
+      payload[id] = Number(document.getElementById("f_" + id).value);
+    }
+
+    const resp = await fetch("/predict/ltv", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + session.access_token,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({}));
+      predictResult.textContent = "Prediction failed: " + (err.detail || resp.statusText);
+      return;
+    }
+
+    const result = await resp.json();
+    predictResult.innerHTML =
+      `Predicted lifetime: <span class="value">${result.predicted_ltv_months} months</span>` +
+      ` <span style="color: var(--muted); font-size: 12px;">(${result.model})</span>`;
   });
 
   signoutBtn.addEventListener("click", async () => {

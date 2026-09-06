@@ -7,8 +7,10 @@
 # Data dumps — data lives in Supabase, not the repo (per project brief)
 *.csv
 
-# Trained models — offline artifacts, not source-controlled here (meta.json sidecars are kept)
+# Trained models — small ones are committed for Railway to serve (see models/README / architecture
+# decision); this still blocks any stray large .pkl accidentally dumped elsewhere in the repo.
 *.pkl
+!models/*.pkl
 catboost_info/
 
 # Python
