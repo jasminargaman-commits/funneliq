@@ -46,6 +46,19 @@ _upsell_model = joblib.load(MODELS_DIR / "upsell_classifier.pkl")
 _upsell_meta = json.loads((MODELS_DIR / "upsell_classifier_meta.json").read_text())
 _upsell_features = _upsell_meta["feature_columns"]
 
+_super_model = joblib.load(MODELS_DIR / "super_customer_classifier.pkl")
+_super_meta = json.loads((MODELS_DIR / "super_customer_classifier_meta.json").read_text())
+_super_features = _super_meta["feature_columns"]
+
+
+def _budget_tier(ad_budget: float) -> str:
+    """Must match the thresholds used to train models/super_customer_classifier.pkl."""
+    if ad_budget <= 1500:
+        return "Low"
+    elif ad_budget <= 5000:
+        return "Mid"
+    return "High"
+
 
 async def require_user(authorization: str | None = Header(default=None)) -> dict:
     """Verify the caller's Supabase session token. Raises 401 if missing/invalid."""
@@ -98,6 +111,13 @@ class UpsellFeatures(BaseModel):
     customer_acquisition_cost: float
 
 
+class SuperCustomerFeatures(BaseModel):
+    ad_budget: float
+    num_leads: float
+    leads_answered: float
+    leads_not_answered: float
+
+
 @app.get("/")
 def root():
     return FileResponse(STATIC_DIR / "index.html")
@@ -128,4 +148,18 @@ async def predict_upsell(features: UpsellFeatures, user: dict = Depends(require_
         "upsell_probability": round(probability, 3),
         "predicted_upsell": probability >= 0.5,
         "model": _upsell_meta["model_type"],
+    }
+
+
+@app.post("/predict/super_customer")
+async def predict_super_customer(features: SuperCustomerFeatures, user: dict = Depends(require_user)):
+    """Early-funnel only, per the Package 4 leakage decision (the strictest package -- see
+    models/super_customer_classifier_meta.json). Only meaningful for purchased==1 customers."""
+    row = features.model_dump()
+    row["budget_tier"] = _budget_tier(row["ad_budget"])
+    row = pd.DataFrame([row])[_super_features]
+    probability = float(_super_model.predict_proba(row)[0][1])
+    return {
+        "super_customer_score": round(probability * 100, 1),
+        "model": _super_meta["model_type"],
     }

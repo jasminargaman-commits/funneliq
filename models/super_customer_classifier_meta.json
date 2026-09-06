@@ -1,0 +1,43 @@
+{
+  "package": 4,
+  "target": "referred",
+  "row_filter": "purchased == 1",
+  "model_type": "CatBoost",
+  "feature_columns": [
+    "ad_budget",
+    "num_leads",
+    "leads_answered",
+    "leads_not_answered",
+    "budget_tier"
+  ],
+  "categorical_features": [
+    "budget_tier"
+  ],
+  "engineered_features": {
+    "budget_tier": "Low <=1500, Mid 2000-5000, High >5000 (from ad_budget)"
+  },
+  "training_row_count": 3163,
+  "cv_folds": 5,
+  "cv_strategy": "StratifiedKFold",
+  "selection_metric": "roc_auc",
+  "hyperparameters": {
+    "learning_rate": 0.01,
+    "depth": 8,
+    "iterations": 400
+  },
+  "cv_metrics": {
+    "accuracy": 0.7511783350330954,
+    "precision": 0.672282923685915,
+    "recall": 0.815675823424901,
+    "f1": 0.7369563611357796,
+    "roc_auc": 0.7759032670366175
+  },
+  "majority_baseline_accuracy": 0.5728738539361365,
+  "untuned_default_roc_auc": 0.7679102624313916,
+  "library_versions": {
+    "python": "3.14.5",
+    "scikit-learn": "1.9.0",
+    "catboost": "1.2.10"
+  },
+  "trained_at_utc": "2026-09-06T09:15:45.308351+00:00"
+}
