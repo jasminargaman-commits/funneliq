@@ -8,7 +8,7 @@
   :root {
     --ink: #1a2230; --ink-soft: #43516b; --muted: #6b7890;
     --bg: #ffffff; --band: #f4f7fb; --line: #dde5f0;
-    --brand: #2f6bff; --brand-dark: #1e3a8a; --red: #d64545;
+    --brand: #2f6bff; --brand-dark: #1e3a8a; --red: #d64545; --green: #0f9d58;
   }
   * { box-sizing: border-box; }
   body {
@@ -68,6 +68,13 @@
     margin-top: 16px; padding: 14px 16px; border-radius: 8px; background: #effaf6;
     border-left: 4px solid var(--green); font-size: 13.5px; line-height: 1.55;
   }
+
+  .strategy-row { display: flex; align-items: center; gap: 10px; margin: 8px 0; }
+  .strategy-label { width: 220px; font-size: 12.5px; color: var(--ink-soft); flex-shrink: 0; }
+  .strategy-track { flex: 1; background: var(--band); border-radius: 6px; height: 22px; overflow: hidden; }
+  .strategy-fill { height: 100%; background: var(--brand); border-radius: 6px; }
+  .strategy-fill.winner { background: var(--green); }
+  .strategy-value { width: 100px; font-size: 12.5px; font-weight: 700; color: var(--ink); text-align: right; flex-shrink: 0; }
 </style>
 </head>
 <body>
@@ -189,6 +196,13 @@
   <div class="recommendation">
     <b>Recommendation: no, don't cut follow-ups short.</b> Dropout is <i>lowest</i> right after the 3rd follow-up (10.4%, the stickiest point in the whole funnel) — the opposite of what the manager's claim predicts. Every recorded closed deal in this dataset required completing all 5 follow-up rounds, so stopping after round 3 would forfeit 100% of closes. The real leak is Stage 5 (attrition during the push from follow-up 4 to 5, 29.2%) — but it's remarkably uniform across every budget tier and campaign (std only 7.2%, no meaningful correlation to anything else recorded), so it isn't a segment this data can isolate further. That points to an operational check (call quality, timing, or script at round 5), not another quantitative cut of these columns.
   </div>
+
+  <div class="section-title">Budget allocation simulator (Package 6)</div>
+  <p class="sub" style="margin-top:0;">Northbound has ₪50,000/month. Compare the brief's four candidate allocation strategies for expected total profit, using a profit model + typical funnel profile per budget level (see <code>07_Package6_Budget_Optimization.ipynb</code>).</p>
+  <button class="predict-btn" id="simulate-btn" style="width:auto; padding:10px 20px;">Compare Strategies</button>
+  <div id="simulate-status" class="sub" style="margin-top:10px;"></div>
+  <div id="simulate-chart" class="dropout-chart" hidden></div>
+  <div id="simulate-recommendation" class="recommendation" hidden></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -387,6 +401,72 @@
     superResult.innerHTML =
       `Super customer score: <span class="value">${result.super_customer_score}</span> / 100` +
       ` <span style="color: var(--muted); font-size: 12px;">(${result.model})</span>`;
+  });
+
+  const simulateBtn = document.getElementById("simulate-btn");
+  const simulateStatus = document.getElementById("simulate-status");
+  const simulateChart = document.getElementById("simulate-chart");
+  const simulateRecommendation = document.getElementById("simulate-recommendation");
+
+  const strategies = [
+    { label: "2×20k + 1×10k", campaigns: [{ ad_budget: 20000, count: 2 }, { ad_budget: 10000, count: 1 }] },
+    { label: "10×5k", campaigns: [{ ad_budget: 5000, count: 10 }] },
+    { label: "25×2k", campaigns: [{ ad_budget: 2000, count: 25 }] },
+    { label: "100×500", campaigns: [{ ad_budget: 500, count: 100 }] },
+  ];
+
+  simulateBtn.addEventListener("click", async () => {
+    simulateStatus.textContent = "Simulating all 4 strategies...";
+    simulateChart.hidden = true;
+    simulateRecommendation.hidden = true;
+
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (!session) {
+      simulateStatus.textContent = "Not signed in.";
+      return;
+    }
+
+    const results = [];
+    for (const s of strategies) {
+      const resp = await fetch("/simulate/budget", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + session.access_token,
+        },
+        body: JSON.stringify({ campaigns: s.campaigns }),
+      });
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({}));
+        simulateStatus.textContent = "Simulation failed: " + (err.detail || resp.statusText);
+        return;
+      }
+      const result = await resp.json();
+      results.push({ label: s.label, profit: result.total_expected_profit });
+    }
+
+    simulateStatus.textContent = "";
+    const maxProfit = Math.max(...results.map(r => r.profit));
+    const winner = results.reduce((a, b) => (b.profit > a.profit ? b : a));
+
+    simulateChart.innerHTML = results.map(r => {
+      const pct = Math.max(2, (r.profit / maxProfit) * 100);
+      const isWinner = r.label === winner.label;
+      return `
+        <div class="strategy-row">
+          <div class="dropout-label" style="width:150px;">${r.label}</div>
+          <div class="strategy-track"><div class="strategy-fill${isWinner ? " winner" : ""}" style="width:${pct}%"></div></div>
+          <div class="strategy-value">₪${r.profit.toLocaleString()}</div>
+        </div>`;
+    }).join("");
+    simulateChart.hidden = false;
+
+    simulateRecommendation.innerHTML =
+      `<b>Best strategy: ${winner.label}</b> — expected total profit ₪${winner.profit.toLocaleString()} ` +
+      `for the same ₪50,000 spend. Neither concentrating into a few large campaigns nor spreading ` +
+      `into the smallest ones wins — the ₪2,000–5,000 budget range converts and profits far better ` +
+      `per shekel than anything outside it.`;
+    simulateRecommendation.hidden = false;
   });
 
   signoutBtn.addEventListener("click", async () => {

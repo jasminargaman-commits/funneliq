@@ -50,6 +50,11 @@ _super_model = joblib.load(MODELS_DIR / "super_customer_classifier.pkl")
 _super_meta = json.loads((MODELS_DIR / "super_customer_classifier_meta.json").read_text())
 _super_features = _super_meta["feature_columns"]
 
+_profit_model = joblib.load(MODELS_DIR / "profit_regressor.pkl")
+_profit_meta = json.loads((MODELS_DIR / "profit_regressor_meta.json").read_text())
+_profit_features = _profit_meta["feature_columns"]
+_budget_profiles = json.loads((MODELS_DIR / "budget_profiles.json").read_text())
+
 
 def _budget_tier(ad_budget: float) -> str:
     """Must match the thresholds used to train models/super_customer_classifier.pkl."""
@@ -118,6 +123,15 @@ class SuperCustomerFeatures(BaseModel):
     leads_not_answered: float
 
 
+class Campaign(BaseModel):
+    ad_budget: int
+    count: int
+
+
+class BudgetStrategy(BaseModel):
+    campaigns: list[Campaign]
+
+
 @app.get("/")
 def root():
     return FileResponse(STATIC_DIR / "index.html")
@@ -162,4 +176,47 @@ async def predict_super_customer(features: SuperCustomerFeatures, user: dict = D
     return {
         "super_customer_score": round(probability * 100, 1),
         "model": _super_meta["model_type"],
+    }
+
+
+def _expected_profit_for_campaign(ad_budget: int) -> float:
+    key = str(ad_budget)
+    if key not in _budget_profiles:
+        supported = ", ".join(sorted(_budget_profiles, key=int))
+        raise HTTPException(
+            status_code=422,
+            detail=f"ad_budget must be one of the budget levels this data covers: {supported}",
+        )
+    profile = _budget_profiles[key]
+    row = pd.DataFrame([profile["typical_profile"]])[_profit_features]
+    predicted_profit_if_purchased = float(_profit_model.predict(row)[0])
+    return profile["purchase_rate"] * predicted_profit_if_purchased
+
+
+@app.post("/simulate/budget")
+async def simulate_budget(strategy: BudgetStrategy, user: dict = Depends(require_user)):
+    """Portfolio-level simulator, not a single-customer prediction -- see the Package 6
+    leakage decision (full-funnel model + typical-profile-per-budget imputation,
+    models/profit_regressor_meta.json / models/budget_profiles.json)."""
+    breakdown = []
+    total_spend = 0
+    total_profit = 0.0
+    for campaign in strategy.campaigns:
+        per_campaign_profit = _expected_profit_for_campaign(campaign.ad_budget)
+        campaign_total_profit = per_campaign_profit * campaign.count
+        campaign_total_spend = campaign.ad_budget * campaign.count
+        breakdown.append({
+            "ad_budget": campaign.ad_budget,
+            "count": campaign.count,
+            "expected_profit_per_campaign": round(per_campaign_profit, 0),
+            "expected_total_profit": round(campaign_total_profit, 0),
+        })
+        total_spend += campaign_total_spend
+        total_profit += campaign_total_profit
+
+    return {
+        "breakdown": breakdown,
+        "total_spend": total_spend,
+        "total_expected_profit": round(total_profit, 0),
+        "model": _profit_meta["model_type"],
     }

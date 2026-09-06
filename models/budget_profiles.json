@@ -1,0 +1,306 @@
+{
+  "500": {
+    "purchase_rate": 0.514018691588785,
+    "typical_profile": {
+      "ad_budget": 500.0,
+      "num_leads": 12.854545454545455,
+      "leads_answered": 5.872727272727273,
+      "leads_not_answered": 6.9818181818181815,
+      "followup_1": 4.127272727272727,
+      "followup_2": 2.9454545454545453,
+      "followup_3": 2.4363636363636365,
+      "followup_4": 2.0727272727272728,
+      "followup_5": 1.2545454545454546,
+      "not_closed": 0.2545454545454545,
+      "closed": 1.0,
+      "calls_to_closed": 6.090909090909091,
+      "calls_to_not_closed": 0.9636363636363636,
+      "customer_acquisition_cost": 500.0
+    }
+  },
+  "800": {
+    "purchase_rate": 0.5743243243243243,
+    "typical_profile": {
+      "ad_budget": 800.0,
+      "num_leads": 16.97590361445783,
+      "leads_answered": 8.060240963855422,
+      "leads_not_answered": 8.91566265060241,
+      "followup_1": 5.927710843373494,
+      "followup_2": 4.325301204819277,
+      "followup_3": 3.4698795180722892,
+      "followup_4": 3.108433734939759,
+      "followup_5": 2.108433734939759,
+      "not_closed": 1.0963855421686748,
+      "closed": 1.0120481927710843,
+      "calls_to_closed": 5.9397590361445785,
+      "calls_to_not_closed": 3.819277108433735,
+      "customer_acquisition_cost": 795.1807228915662
+    }
+  },
+  "1000": {
+    "purchase_rate": 0.7123287671232876,
+    "typical_profile": {
+      "ad_budget": 1000.0,
+      "num_leads": 19.670967741935485,
+      "leads_answered": 9.4,
+      "leads_not_answered": 10.270967741935484,
+      "followup_1": 7.096774193548387,
+      "followup_2": 5.180645161290323,
+      "followup_3": 4.174193548387096,
+      "followup_4": 3.729032258064516,
+      "followup_5": 2.5806451612903225,
+      "not_closed": 1.4451612903225806,
+      "closed": 1.135483870967742,
+      "calls_to_closed": 6.032258064516129,
+      "calls_to_not_closed": 3.9290322580645163,
+      "customer_acquisition_cost": 932.258064516129
+    }
+  },
+  "1500": {
+    "purchase_rate": 0.9290540540540541,
+    "typical_profile": {
+      "ad_budget": 1500.0,
+      "num_leads": 25.258181818181818,
+      "leads_answered": 14.218181818181819,
+      "leads_not_answered": 11.04,
+      "followup_1": 10.92,
+      "followup_2": 8.054545454545455,
+      "followup_3": 6.512727272727273,
+      "followup_4": 5.825454545454545,
+      "followup_5": 4.072727272727272,
+      "not_closed": 2.6763636363636363,
+      "closed": 1.3963636363636365,
+      "calls_to_closed": 5.9818181818181815,
+      "calls_to_not_closed": 4.050909090909091,
+      "customer_acquisition_cost": 1204.5454545454545
+    }
+  },
+  "2000": {
+    "purchase_rate": 0.9707317073170731,
+    "typical_profile": {
+      "ad_budget": 2000.0,
+      "num_leads": 30.08101265822785,
+      "leads_answered": 16.88860759493671,
+      "leads_not_answered": 13.192405063291138,
+      "followup_1": 12.941772151898734,
+      "followup_2": 9.635443037974683,
+      "followup_3": 7.784810126582278,
+      "followup_4": 6.984810126582278,
+      "followup_5": 4.908860759493671,
+      "not_closed": 2.7341772151898733,
+      "closed": 2.1746835443037975,
+      "calls_to_closed": 2.2962025316455694,
+      "calls_to_not_closed": 4.010126582278481,
+      "customer_acquisition_cost": 1019.2303797468354
+    }
+  },
+  "2500": {
+    "purchase_rate": 0.9566473988439307,
+    "typical_profile": {
+      "ad_budget": 2500.0,
+      "num_leads": 34.691131498470945,
+      "leads_answered": 23.021406727828747,
+      "leads_not_answered": 11.669724770642201,
+      "followup_1": 17.94495412844037,
+      "followup_2": 13.330275229357799,
+      "followup_3": 10.813455657492355,
+      "followup_4": 9.675840978593271,
+      "followup_5": 6.844036697247707,
+      "not_closed": 3.8929663608562692,
+      "closed": 2.9510703363914375,
+      "calls_to_closed": 2.27217125382263,
+      "calls_to_not_closed": 3.9663608562691133,
+      "customer_acquisition_cost": 900.1651376146789
+    }
+  },
+  "3000": {
+    "purchase_rate": 0.9395770392749244,
+    "typical_profile": {
+      "ad_budget": 3000.0,
+      "num_leads": 38.63843648208469,
+      "leads_answered": 25.889250814332247,
+      "leads_not_answered": 12.749185667752442,
+      "followup_1": 20.18241042345277,
+      "followup_2": 14.928338762214985,
+      "followup_3": 12.22801302931596,
+      "followup_4": 10.990228013029316,
+      "followup_5": 7.749185667752443,
+      "not_closed": 4.4267100977198695,
+      "closed": 3.3224755700325734,
+      "calls_to_closed": 2.2996742671009773,
+      "calls_to_not_closed": 3.977198697068404,
+      "customer_acquisition_cost": 958.3061889250814
+    }
+  },
+  "4000": {
+    "purchase_rate": 0.9620253164556962,
+    "typical_profile": {
+      "ad_budget": 4000.0,
+      "num_leads": 45.59602649006622,
+      "leads_answered": 30.473509933774835,
+      "leads_not_answered": 15.12251655629139,
+      "followup_1": 23.897350993377483,
+      "followup_2": 17.804635761589402,
+      "followup_3": 14.526490066225165,
+      "followup_4": 12.996688741721854,
+      "followup_5": 9.211920529801324,
+      "not_closed": 5.321192052980132,
+      "closed": 3.890728476821192,
+      "calls_to_closed": 2.2980132450331126,
+      "calls_to_not_closed": 3.9536423841059603,
+      "customer_acquisition_cost": 1077.1523178807947
+    }
+  },
+  "5000": {
+    "purchase_rate": 0.9426751592356688,
+    "typical_profile": {
+      "ad_budget": 5000.0,
+      "num_leads": 52.27891156462585,
+      "leads_answered": 34.993197278911566,
+      "leads_not_answered": 17.285714285714285,
+      "followup_1": 27.540816326530614,
+      "followup_2": 20.46938775510204,
+      "followup_3": 16.653061224489797,
+      "followup_4": 14.931972789115646,
+      "followup_5": 10.58843537414966,
+      "not_closed": 6.139455782312925,
+      "closed": 4.448979591836735,
+      "calls_to_closed": 2.3435374149659864,
+      "calls_to_not_closed": 3.945578231292517,
+      "customer_acquisition_cost": 1173.234693877551
+    }
+  },
+  "6000": {
+    "purchase_rate": 0.9698492462311558,
+    "typical_profile": {
+      "ad_budget": 6000.0,
+      "num_leads": 58.46031746031746,
+      "leads_answered": 35.8994708994709,
+      "leads_not_answered": 22.56084656084656,
+      "followup_1": 28.280423280423282,
+      "followup_2": 21.11111111111111,
+      "followup_3": 17.116402116402117,
+      "followup_4": 15.328042328042327,
+      "followup_5": 10.783068783068783,
+      "not_closed": 7.465608465608466,
+      "closed": 3.3174603174603177,
+      "calls_to_closed": 4.825396825396825,
+      "calls_to_not_closed": 4.042328042328043,
+      "customer_acquisition_cost": 1920.6349206349207
+    }
+  },
+  "7000": {
+    "purchase_rate": 0.9513513513513514,
+    "typical_profile": {
+      "ad_budget": 7000.0,
+      "num_leads": 63.9367816091954,
+      "leads_answered": 39.12643678160919,
+      "leads_not_answered": 24.810344827586206,
+      "followup_1": 30.95402298850575,
+      "followup_2": 23.086206896551722,
+      "followup_3": 18.775862068965516,
+      "followup_4": 16.85632183908046,
+      "followup_5": 11.96551724137931,
+      "not_closed": 8.333333333333334,
+      "closed": 3.632183908045977,
+      "calls_to_closed": 4.747126436781609,
+      "calls_to_not_closed": 3.913793103448276,
+      "customer_acquisition_cost": 2042.2011494252874
+    }
+  },
+  "8000": {
+    "purchase_rate": 0.9354838709677419,
+    "typical_profile": {
+      "ad_budget": 8000.0,
+      "num_leads": 69.70689655172414,
+      "leads_answered": 42.5,
+      "leads_not_answered": 27.20689655172414,
+      "followup_1": 33.491379310344826,
+      "followup_2": 25.025862068965516,
+      "followup_3": 20.474137931034484,
+      "followup_4": 18.32758620689655,
+      "followup_5": 12.922413793103448,
+      "not_closed": 9.060344827586206,
+      "closed": 3.8620689655172415,
+      "calls_to_closed": 4.681034482758621,
+      "calls_to_not_closed": 3.8448275862068964,
+      "customer_acquisition_cost": 2177.9310344827586
+    }
+  },
+  "10000": {
+    "purchase_rate": 0.958974358974359,
+    "typical_profile": {
+      "ad_budget": 10000.0,
+      "num_leads": 79.53225806451613,
+      "leads_answered": 49.02150537634409,
+      "leads_not_answered": 30.510752688172044,
+      "followup_1": 38.725806451612904,
+      "followup_2": 28.908602150537636,
+      "followup_3": 23.607526881720432,
+      "followup_4": 21.225806451612904,
+      "followup_5": 15.209677419354838,
+      "not_closed": 10.698924731182796,
+      "closed": 4.510752688172043,
+      "calls_to_closed": 4.741935483870968,
+      "calls_to_not_closed": 4.059139784946237,
+      "customer_acquisition_cost": 2340.2365591397847
+    }
+  },
+  "12000": {
+    "purchase_rate": 0.9137931034482759,
+    "typical_profile": {
+      "ad_budget": 12000.0,
+      "num_leads": 88.48076923076923,
+      "leads_answered": 48.49038461538461,
+      "leads_not_answered": 39.99038461538461,
+      "followup_1": 38.23076923076923,
+      "followup_2": 28.5,
+      "followup_3": 23.240384615384617,
+      "followup_4": 20.85576923076923,
+      "followup_5": 15.009615384615385,
+      "not_closed": 10.615384615384615,
+      "closed": 4.394230769230769,
+      "calls_to_closed": 4.6826923076923075,
+      "calls_to_not_closed": 4.115384615384615,
+      "customer_acquisition_cost": 2906.173076923077
+    }
+  },
+  "15000": {
+    "purchase_rate": 0.9557522123893806,
+    "typical_profile": {
+      "ad_budget": 15000.0,
+      "num_leads": 101.66666666666667,
+      "leads_answered": 55.2037037037037,
+      "leads_not_answered": 46.46296296296296,
+      "followup_1": 43.71296296296296,
+      "followup_2": 32.46296296296296,
+      "followup_3": 26.435185185185187,
+      "followup_4": 23.703703703703702,
+      "followup_5": 17.02777777777778,
+      "not_closed": 11.972222222222221,
+      "closed": 5.055555555555555,
+      "calls_to_closed": 4.777777777777778,
+      "calls_to_not_closed": 3.814814814814815,
+      "customer_acquisition_cost": 3092.759259259259
+    }
+  },
+  "20000": {
+    "purchase_rate": 0.9295774647887324,
+    "typical_profile": {
+      "ad_budget": 20000.0,
+      "num_leads": 121.62121212121212,
+      "leads_answered": 65.51515151515152,
+      "leads_not_answered": 56.10606060606061,
+      "followup_1": 51.92424242424242,
+      "followup_2": 38.81818181818182,
+      "followup_3": 31.924242424242426,
+      "followup_4": 28.636363636363637,
+      "followup_5": 20.363636363636363,
+      "not_closed": 14.43939393939394,
+      "closed": 5.924242424242424,
+      "calls_to_closed": 4.681818181818182,
+      "calls_to_not_closed": 4.090909090909091,
+      "customer_acquisition_cost": 3570.1969696969695
+    }
+  }
+}
