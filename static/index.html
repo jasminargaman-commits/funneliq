@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FunnelIQ</title>
+<style>
+  :root {
+    --ink: #1a2230; --ink-soft: #43516b; --muted: #6b7890;
+    --bg: #ffffff; --band: #f4f7fb; --line: #dde5f0;
+    --brand: #2f6bff; --brand-dark: #1e3a8a; --red: #d64545;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    background: var(--band); color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  .card {
+    background: var(--bg); border: 1px solid var(--line); border-radius: 12px;
+    padding: 32px; width: 100%; max-width: 420px; box-shadow: 0 2px 12px rgba(20,30,60,0.06);
+  }
+  h1 { margin: 0 0 4px; font-size: 22px; color: var(--brand-dark); }
+  p.sub { margin: 0 0 24px; color: var(--muted); font-size: 14px; }
+  label { display: block; font-size: 13px; font-weight: 600; color: var(--ink-soft); margin: 14px 0 4px; }
+  input {
+    width: 100%; padding: 9px 11px; border: 1px solid var(--line); border-radius: 8px;
+    font-size: 14px; color: var(--ink);
+  }
+  input:focus { outline: 2px solid var(--brand); outline-offset: 1px; }
+  button {
+    width: 100%; margin-top: 20px; padding: 10px; border: none; border-radius: 8px;
+    background: var(--brand); color: #fff; font-size: 14px; font-weight: 600; cursor: pointer;
+  }
+  button:hover { background: var(--brand-dark); }
+  button.secondary { background: transparent; color: var(--ink-soft); border: 1px solid var(--line); margin-top: 10px; }
+  button.secondary:hover { background: var(--band); }
+  .error { color: var(--red); font-size: 13px; margin-top: 12px; min-height: 16px; }
+  [hidden] { display: none !important; }
+
+  .dash { max-width: 640px; }
+  .dash-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+  .dash-head span { font-size: 13px; color: var(--muted); }
+  table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
+  th, td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--line); }
+  thead th { background: var(--brand-dark); color: #fff; }
+  tbody tr:nth-child(even) { background: var(--band); }
+</style>
+</head>
+<body>
+
+<div id="login-card" class="card">
+  <h1>FunnelIQ</h1>
+  <p class="sub">Sign in to the Northbound Media dashboard.</p>
+  <form id="login-form">
+    <label for="email">Email</label>
+    <input id="email" type="email" required autocomplete="username" />
+    <label for="password">Password</label>
+    <input id="password" type="password" required autocomplete="current-password" />
+    <button type="submit">Sign in</button>
+    <div id="login-error" class="error"></div>
+  </form>
+</div>
+
+<div id="dash-card" class="card dash" hidden>
+  <div class="dash-head">
+    <h1>FunnelIQ</h1>
+    <span id="whoami"></span>
+  </div>
+  <p class="sub">Signed in. This tool is not open to the public -- Row Level Security on the database only allows reads from an authenticated session like this one.</p>
+  <button class="secondary" id="signout-btn">Sign out</button>
+  <div id="data-status" class="sub" style="margin-top:18px;"></div>
+  <table id="data-table" hidden>
+    <thead><tr><th>ad_budget</th><th>num_leads</th><th>closed</th><th>purchased</th><th>upsell</th></tr></thead>
+    <tbody id="data-rows"></tbody>
+  </table>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  // Anon key: safe to embed client-side by design (Supabase docs) --
+  // it grants no access on its own, access is enforced entirely by the
+  // funnel_records RLS policy (authenticated-only SELECT). The
+  // service_role key must NEVER appear in this file.
+  const SUPABASE_URL = "https://rvyxujlbqiiiydguehve.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ2eXh1amxicWlpaXlkZ3VlaHZlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg0MjY3MzUsImV4cCI6MjEwNDAwMjczNX0.pQeljNhri5wwo4phN7BiPSmpImVpUZf-rkUUtb6IrIw";
+
+  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  const loginCard = document.getElementById("login-card");
+  const dashCard = document.getElementById("dash-card");
+  const loginForm = document.getElementById("login-form");
+  const loginError = document.getElementById("login-error");
+  const whoami = document.getElementById("whoami");
+  const signoutBtn = document.getElementById("signout-btn");
+  const dataStatus = document.getElementById("data-status");
+  const dataTable = document.getElementById("data-table");
+  const dataRows = document.getElementById("data-rows");
+
+  function showDashboard(session) {
+    loginCard.hidden = true;
+    dashCard.hidden = false;
+    whoami.textContent = session.user.email;
+    loadSample(session);
+  }
+
+  function showLogin() {
+    loginCard.hidden = false;
+    dashCard.hidden = true;
+    dataTable.hidden = true;
+    dataRows.innerHTML = "";
+  }
+
+  async function loadSample(session) {
+    dataStatus.textContent = "Loading a sample from Supabase...";
+    const { data, error, count } = await supabaseClient
+      .from("funnel_records")
+      .select("ad_budget, num_leads, closed, purchased, upsell", { count: "exact" })
+      .limit(5);
+
+    if (error) {
+      dataStatus.textContent = "Could not read funnel_records: " + error.message;
+      return;
+    }
+
+    dataStatus.textContent = `Read live from Supabase as ${session.user.email} -- ${count} total rows, first 5 shown:`;
+    dataRows.innerHTML = data.map(r =>
+      `<tr><td>${r.ad_budget}</td><td>${r.num_leads}</td><td>${r.closed}</td><td>${r.purchased}</td><td>${r.upsell}</td></tr>`
+    ).join("");
+    dataTable.hidden = false;
+  }
+
+  loginForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    loginError.textContent = "";
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+    if (error) {
+      loginError.textContent = error.message;
+    }
+    // onAuthStateChange below handles the UI switch on success.
+  });
+
+  signoutBtn.addEventListener("click", async () => {
+    await supabaseClient.auth.signOut();
+    // onAuthStateChange below handles the UI switch back to login.
+  });
+
+  supabaseClient.auth.onAuthStateChange((_event, session) => {
+    if (session) {
+      showDashboard(session);
+    } else {
+      showLogin();
+    }
+  });
+
+  // Initial check on page load.
+  supabaseClient.auth.getSession().then(({ data: { session } }) => {
+    if (session) showDashboard(session); else showLogin();
+  });
+</script>
+</body>
+</html>
