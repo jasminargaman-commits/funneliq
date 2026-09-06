@@ -7,8 +7,9 @@
 # Data dumps — data lives in Supabase, not the repo (per project brief)
 *.csv
 
-# Trained models — offline artifacts, not source-controlled here
+# Trained models — offline artifacts, not source-controlled here (meta.json sidecars are kept)
 *.pkl
+catboost_info/
 
 # Python
 __pycache__/
