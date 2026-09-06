@@ -56,6 +56,18 @@
     border: 1px solid var(--line); font-size: 14px; min-height: 20px;
   }
   .predict-result .value { font-size: 22px; font-weight: 700; color: var(--brand-dark); }
+
+  .dropout-chart { margin-top: 14px; }
+  .dropout-row { display: flex; align-items: center; gap: 10px; margin: 6px 0; }
+  .dropout-label { width: 190px; font-size: 12px; color: var(--ink-soft); flex-shrink: 0; }
+  .dropout-track { flex: 1; background: var(--band); border-radius: 6px; height: 18px; overflow: hidden; }
+  .dropout-fill { height: 100%; background: var(--brand); border-radius: 6px; }
+  .dropout-fill.highlight { background: var(--red); }
+  .dropout-pct { width: 48px; font-size: 12px; font-weight: 700; color: var(--ink); text-align: right; flex-shrink: 0; }
+  .recommendation {
+    margin-top: 16px; padding: 14px 16px; border-radius: 8px; background: #effaf6;
+    border-left: 4px solid var(--green); font-size: 13.5px; line-height: 1.55;
+  }
 </style>
 </head>
 <body>
@@ -139,6 +151,44 @@
   </form>
   <button class="predict-btn" id="super-btn" style="width:auto; padding:10px 20px;">Score Customer</button>
   <div id="super-result" class="predict-result" hidden></div>
+
+  <div class="section-title">Follow-up dropout analysis (Package 5)</div>
+  <p class="sub" style="margin-top:0;">Testing the sales manager's claim: "after the 3rd follow-up, we're just wasting time." Aggregate dropout rate at each stage, computed from all 3,490 campaigns (see <code>06_Package5_Followup_Dropout.ipynb</code>).</p>
+  <div class="dropout-chart">
+    <div class="dropout-row">
+      <div class="dropout-label">Initial: no answer</div>
+      <div class="dropout-track"><div class="dropout-fill" style="width:100%"></div></div>
+      <div class="dropout-pct">39.5%</div>
+    </div>
+    <div class="dropout-row">
+      <div class="dropout-label">Stage 1 (after follow-up 1)</div>
+      <div class="dropout-track"><div class="dropout-fill" style="width:55%"></div></div>
+      <div class="dropout-pct">21.7%</div>
+    </div>
+    <div class="dropout-row">
+      <div class="dropout-label">Stage 2 (after follow-up 2)</div>
+      <div class="dropout-track"><div class="dropout-fill" style="width:65%"></div></div>
+      <div class="dropout-pct">25.7%</div>
+    </div>
+    <div class="dropout-row">
+      <div class="dropout-label">Stage 3 (after follow-up 3)</div>
+      <div class="dropout-track"><div class="dropout-fill" style="width:47%"></div></div>
+      <div class="dropout-pct">18.6%</div>
+    </div>
+    <div class="dropout-row">
+      <div class="dropout-label">Stage 4 (after follow-up 4) — lowest</div>
+      <div class="dropout-track"><div class="dropout-fill" style="width:26%"></div></div>
+      <div class="dropout-pct">10.4%</div>
+    </div>
+    <div class="dropout-row">
+      <div class="dropout-label">Stage 5 (after follow-up 5) — the real leak</div>
+      <div class="dropout-track"><div class="dropout-fill highlight" style="width:74%"></div></div>
+      <div class="dropout-pct">29.2%</div>
+    </div>
+  </div>
+  <div class="recommendation">
+    <b>Recommendation: no, don't cut follow-ups short.</b> Dropout is <i>lowest</i> right after the 3rd follow-up (10.4%, the stickiest point in the whole funnel) — the opposite of what the manager's claim predicts. Every recorded closed deal in this dataset required completing all 5 follow-up rounds, so stopping after round 3 would forfeit 100% of closes. If there's a real leak, it's Stage 5 (29.2% dropout) — worth investigating why engaged leads suddenly drop right before the funnel resolves.
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
