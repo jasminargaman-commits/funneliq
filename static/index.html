@@ -4,83 +4,219 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>FunnelIQ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --ink: #1a2230; --ink-soft: #43516b; --muted: #6b7890;
-    --bg: #ffffff; --band: #f4f7fb; --line: #dde5f0;
-    --brand: #2f6bff; --brand-dark: #1e3a8a; --red: #d64545; --green: #0f9d58;
+    --ink: #0f172a; --ink-soft: #47536b; --muted: #8993a8;
+    --bg-page: #f6f7f9; --bg: #ffffff; --band: #f4f6f9; --line: #e2e6ed;
+    --brand: #2f6bff; --brand-dark: #1e3a8a; --brand-light: #e8f0ff;
+    --contrast: #10131c; --red: #e4483f; --green: #16a34a;
+    --radius-lg: 20px; --radius-md: 12px;
   }
   * { box-sizing: border-box; }
   body {
-    margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center;
-    background: var(--band); color: var(--ink);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    margin: 0; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center;
+    background: var(--bg-page); color: var(--ink); padding: 40px 20px;
+    font-family: 'Manrope', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   }
   .card {
-    background: var(--bg); border: 1px solid var(--line); border-radius: 12px;
-    padding: 32px; width: 100%; max-width: 420px; box-shadow: 0 2px 12px rgba(20,30,60,0.06);
+    background: var(--bg); border: none; border-radius: var(--radius-lg);
+    padding: 36px; width: 100%; max-width: 420px; box-shadow: 0 8px 28px rgba(15,23,42,0.08);
+    margin: auto;
   }
-  h1 { margin: 0 0 4px; font-size: 22px; color: var(--brand-dark); }
+  .logo-mark { display: block; height: 34px; width: auto; margin-bottom: 18px; }
+  h1 { margin: 0 0 4px; font-size: 24px; font-weight: 800; letter-spacing: -0.01em; color: var(--ink); }
   p.sub { margin: 0 0 24px; color: var(--muted); font-size: 14px; }
   label { display: block; font-size: 13px; font-weight: 600; color: var(--ink-soft); margin: 14px 0 4px; }
   input {
-    width: 100%; padding: 9px 11px; border: 1px solid var(--line); border-radius: 8px;
-    font-size: 14px; color: var(--ink);
+    width: 100%; padding: 9px 11px; border: 1px solid var(--line); border-radius: var(--radius-md);
+    font-size: 14px; color: var(--ink); background: var(--band); font-family: inherit;
   }
   input:focus { outline: 2px solid var(--brand); outline-offset: 1px; }
   button {
-    width: 100%; margin-top: 20px; padding: 10px; border: none; border-radius: 8px;
-    background: var(--brand); color: #fff; font-size: 14px; font-weight: 600; cursor: pointer;
+    width: 100%; margin-top: 20px; padding: 11px; border: none; border-radius: var(--radius-md);
+    background: var(--brand); color: #fff; font-size: 14px; font-weight: 700; cursor: pointer;
+    font-family: inherit;
   }
   button:hover { background: var(--brand-dark); }
-  button.secondary { background: transparent; color: var(--ink-soft); border: 1px solid var(--line); margin-top: 10px; }
+  button.secondary { width: auto; background: var(--bg); color: var(--ink-soft); border: 1px solid var(--line); margin-top: 0; box-shadow: 0 1px 4px rgba(15,23,42,0.04); }
   button.secondary:hover { background: var(--band); }
   .error { color: var(--red); font-size: 13px; margin-top: 12px; min-height: 16px; }
   [hidden] { display: none !important; }
 
-  .dash { max-width: 640px; }
-  .dash-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
-  .dash-head span { font-size: 13px; color: var(--muted); }
+  .dash-page { width: 100%; max-width: 1320px; margin: auto; }
+  .topbar {
+    display: flex; justify-content: space-between; align-items: center; gap: 16px;
+    background: var(--bg); border-radius: var(--radius-lg); padding: 14px 24px;
+    box-shadow: 0 8px 28px rgba(15,23,42,0.08); margin-bottom: 20px;
+  }
+  .topbar .logo-mark { margin-bottom: 0; height: 36px; }
+  .page-intro { margin: 6px 0 12px; padding: 0 4px; }
+  .page-intro h2 { margin: 0 0 3px; font-size: 23px; font-weight: 800; letter-spacing: -0.01em; color: var(--ink); }
+  .page-intro p { margin: 0; font-size: 14px; color: var(--muted); }
+
+  .tool-nav { margin: 0 0 14px; padding: 0 4px; }
+  .tool-nav-row {
+    display: flex; align-items: center; flex-wrap: wrap; row-gap: 6px; column-gap: 6px;
+    overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding-bottom: 2px;
+  }
+  .tool-nav-row::-webkit-scrollbar { display: none; }
+  .tool-nav-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--muted); flex-shrink: 0; margin-right: 2px;
+  }
+  .tool-nav-divider { width: 1px; align-self: stretch; min-height: 22px; background: var(--line); margin: 0 6px; flex-shrink: 0; }
+  .tool-tab {
+    display: flex; align-items: center; gap: 7px; flex-shrink: 0; width: auto; margin-top: 0;
+    padding: 7px 13px; border-radius: 10px; border: 1px solid transparent;
+    background: transparent; color: var(--muted); font-size: 13.5px; font-weight: 500;
+    cursor: pointer; font-family: inherit; white-space: nowrap;
+  }
+  .tool-tab:hover:not(.active) { background: var(--band); color: var(--ink-soft); }
+  .tool-tab.active { background: var(--brand-light); color: var(--brand-dark); font-weight: 700; }
+  .tool-tab-icon { width: 15px; height: 15px; flex-shrink: 0; }
+  .topbar-right { display: flex; align-items: center; gap: 14px; }
+  .topbar-right span { font-size: 13px; color: var(--muted); }
+  .dash-intro { color: var(--muted); font-size: 13.5px; margin: 0 0 20px; padding: 0 4px; }
+
+  .tile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .tile {
+    background: var(--bg); border-radius: var(--radius-lg); padding: 26px 28px;
+    box-shadow: 0 8px 28px rgba(15,23,42,0.08);
+  }
+  .tile.wide { grid-column: 1 / -1; }
+  @media (max-width: 860px) { .tile-grid { grid-template-columns: 1fr; } }
+
+  .tile-head { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+  .tile-icon {
+    width: 34px; height: 34px; border-radius: 50%; background: var(--brand-light);
+    color: var(--brand); display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .tile-icon svg { width: 18px; height: 18px; }
+  .tile-head .section-title { margin: 0; }
+
   table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
-  th, td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--line); }
-  thead th { background: var(--brand-dark); color: #fff; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+  thead th { background: var(--brand); color: #fff; font-weight: 700; }
+  thead th:first-child { border-top-left-radius: 8px; }
+  thead th:last-child { border-top-right-radius: 8px; }
   tbody tr:nth-child(even) { background: var(--band); }
 
-  .section-title { font-size: 15px; font-weight: 700; color: var(--brand-dark); margin: 28px 0 4px; }
-  .field-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; }
+  .section-title { font-size: 16px; font-weight: 800; color: var(--ink); margin: 0 0 6px; }
+  .tile .sub { margin-bottom: 4px; }
+  .field-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 14px; }
+  .tile.wide .field-grid { grid-template-columns: repeat(5, 1fr); }
+  #super-form { grid-template-columns: repeat(3, 1fr); }
+  .info-link {
+    display: block; width: auto; background: none; border: none; padding: 0;
+    margin: 6px 0 0; font-size: 12.5px; font-weight: 600; color: var(--brand);
+    cursor: pointer; text-align: left; font-family: inherit;
+  }
+  .info-link:hover { color: var(--brand-dark); background: none; }
+  .info-pop {
+    margin-top: 8px; padding: 10px 12px; background: var(--band); border: 1px solid var(--line);
+    border-radius: var(--radius-md); font-size: 12.5px; color: var(--ink-soft); line-height: 1.5; max-width: 480px;
+  }
+  .derived-metrics { font-size: 12.5px; color: var(--muted); margin-top: 10px; }
+  .score-panel {
+    width: 100%; background: var(--brand-light); border: 1px solid var(--line);
+    border-radius: var(--radius-lg); padding: 22px 24px;
+  }
+  .score-placeholder {
+    display: flex; align-items: center; justify-content: center; text-align: center;
+    min-height: 220px; color: var(--muted); font-size: 13.5px; line-height: 1.5;
+  }
+  .driver-section { margin-top: 13px; padding-top: 11px; border-top: 1px solid var(--line); }
+  .reco-headline { font-size: 15px; font-weight: 800; color: var(--ink); margin-bottom: 10px; }
+  .reco-hero { text-align: center; padding: 8px 0 4px; }
+  .reco-hero-value { font-size: 32px; font-weight: 800; color: var(--brand-dark); line-height: 1.1; }
+  .reco-hero-caption { font-size: 12.5px; color: var(--muted); margin-top: 2px; }
+  .reco-hero-transition { font-size: 13px; font-weight: 600; color: var(--ink); margin-top: 1px; }
+  .reco-hero-tag { font-size: 11.5px; font-weight: 700; letter-spacing: 0.03em; color: var(--brand); margin-top: 4px; }
+  .finding b { font-size: 13.5px; color: var(--ink); display: block; }
+  .finding p { font-size: 13px; color: var(--muted); margin: 2px 0 0; }
+  .next-step { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
+  .next-step p { font-size: 12px; color: var(--muted); line-height: 1.5; margin: 4px 0 0; }
+  .driver-title { font-size: 13px; font-weight: 700; color: var(--ink-soft); margin-bottom: 9px; }
+  .driver-row { display: flex; justify-content: space-between; font-size: 13.5px; color: var(--ink); padding: 4px 0; }
+  .score-panel .score-gauge { max-width: 225px; }
+  .driver-row span:first-child { color: var(--ink-soft); }
+  .driver-row span:last-child { font-weight: 700; }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  button:disabled:hover { background: var(--brand); }
+  .input-group-title { font-size: 12.5px; font-weight: 700; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.03em; margin: 16px 0 6px; }
+  .input-group-title:first-child { margin-top: 0; }
+  .toggle-group { display: flex; gap: 6px; margin-top: 2px; }
+  .toggle-btn {
+    flex: 1; width: auto; margin-top: 0; padding: 8px 0; border: 1px solid var(--line);
+    border-radius: var(--radius-md); background: var(--band); color: var(--ink-soft);
+    font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit;
+  }
+  .toggle-btn.active { background: var(--brand); border-color: var(--brand); color: #fff; }
+  .toggle-btn:hover:not(.active) { background: var(--line); }
+  .mini-chart { display: block; width: 100%; max-width: 420px; height: auto; margin: 6px auto 0; }
+  .lifetime-hero { text-align: center; }
+  .lifetime-label { font-size: 11.5px; font-weight: 700; letter-spacing: 0.06em; color: var(--brand); text-transform: uppercase; }
+  .lifetime-value { font-size: 44px; font-weight: 800; color: var(--brand-dark); line-height: 1.05; margin-top: 4px; }
+  .lifetime-unit { font-size: 13px; color: var(--muted); margin-top: -2px; }
+  .lifetime-compare { text-align: center; font-size: 13.5px; font-weight: 700; margin-top: 7px; color: var(--brand-dark); }
+  .benchmark-bar { display: block; width: 100%; max-width: 420px; height: auto; margin: 11px auto 0; }
+  .prob-benchmark { display: block; width: 100%; max-width: 420px; height: auto; margin: 8px auto 0; }
+  .qual-label { text-align: center; font-size: 14px; font-weight: 600; color: var(--ink); margin-top: 2px; }
+  .key-signal-value { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+  .key-signal-note { font-size: 12.5px; color: var(--muted); line-height: 1.5; }
+  .split-row { display: flex; gap: 28px; margin-top: 14px; align-items: center; }
+  .split-left { flex: 1.1; min-width: 0; }
+  .split-right { flex: 1; min-width: 0; display: flex; align-items: center; justify-content: center; }
+  .split-right .predict-result { width: 100%; }
+  .split-row--stretch { align-items: stretch; }
+  .split-row--stretch .split-right { align-items: center; justify-content: center; }
+  .split-row--stretch .predict-result { width: 70%; height: 70%; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 6px; }
+  .result-label { font-size: 17px; font-weight: 800; color: var(--ink); letter-spacing: -0.01em; }
+  .result-value { font-size: 34px; font-weight: 800; color: var(--brand-dark); line-height: 1.15; }
+  .result-caption { font-size: 12.5px; color: var(--muted); }
+  @media (max-width: 700px) { .split-row { flex-direction: column; align-items: stretch; } }
   .field-grid label { font-size: 11px; font-weight: 600; color: var(--ink-soft); margin: 0 0 3px; }
-  .field-grid input { padding: 6px 8px; font-size: 13px; }
-  .predict-btn { margin-top: 14px; }
+  .field-grid input { padding: 7px 8px; font-size: 13px; }
+  .predict-btn { margin-top: 16px; }
   .predict-result {
-    margin-top: 14px; padding: 12px 14px; border-radius: 8px; background: var(--band);
+    margin-top: 14px; padding: 14px 16px; border-radius: var(--radius-md); background: var(--band);
     border: 1px solid var(--line); font-size: 14px; min-height: 20px;
   }
-  .predict-result .value { font-size: 22px; font-weight: 700; color: var(--brand-dark); }
+  .predict-result .value { font-size: 26px; font-weight: 800; color: var(--brand); }
+  .score-gauge { display: block; width: 100%; max-width: 260px; height: auto; margin: 4px auto 0; }
+  .line-chart { display: block; width: 100%; max-width: 780px; height: auto; margin: 18px auto 0; }
+  .strategy-chart { display: block; width: 100%; max-width: 960px; height: auto; margin: 2px auto 0; overflow: visible; }
+  .score-gauge-caption { text-align: center; margin-top: 2px; }
 
   .dropout-chart { margin-top: 14px; }
-  .dropout-row { display: flex; align-items: center; gap: 10px; margin: 6px 0; }
+  .dropout-row { display: flex; align-items: center; gap: 10px; margin: 8px 0; }
   .dropout-label { width: 190px; font-size: 12px; color: var(--ink-soft); flex-shrink: 0; }
-  .dropout-track { flex: 1; background: var(--band); border-radius: 6px; height: 18px; overflow: hidden; }
-  .dropout-fill { height: 100%; background: var(--brand); border-radius: 6px; }
-  .dropout-fill.highlight { background: var(--red); }
+  .dropout-track { flex: 1; background: var(--band); border-radius: 999px; height: 16px; overflow: hidden; }
+  .dropout-fill { height: 100%; background: var(--brand); border-radius: 999px; }
+  .dropout-fill.highlight { background: var(--contrast); }
   .dropout-pct { width: 48px; font-size: 12px; font-weight: 700; color: var(--ink); text-align: right; flex-shrink: 0; }
+  .recommendation ul { margin: 8px 0 0; padding-left: 20px; }
+  .recommendation li { margin: 5px 0; }
   .recommendation {
-    margin-top: 16px; padding: 14px 16px; border-radius: 8px; background: #effaf6;
+    margin-top: 16px; padding: 14px 16px; border-radius: var(--radius-md); background: var(--band);
     border-left: 4px solid var(--green); font-size: 13.5px; line-height: 1.55;
   }
 
   .strategy-row { display: flex; align-items: center; gap: 10px; margin: 8px 0; }
   .strategy-label { width: 220px; font-size: 12.5px; color: var(--ink-soft); flex-shrink: 0; }
-  .strategy-track { flex: 1; background: var(--band); border-radius: 6px; height: 22px; overflow: hidden; }
-  .strategy-fill { height: 100%; background: var(--brand); border-radius: 6px; }
-  .strategy-fill.winner { background: var(--green); }
+  .strategy-track { flex: 1; background: var(--band); border-radius: 999px; height: 20px; overflow: hidden; }
+  .strategy-fill { height: 100%; background: var(--brand); border-radius: 999px; }
+  .strategy-fill.winner { background: var(--contrast); }
   .strategy-value { width: 100px; font-size: 12.5px; font-weight: 700; color: var(--ink); text-align: right; flex-shrink: 0; }
 </style>
 </head>
 <body>
 
 <div id="login-card" class="card">
-  <h1>FunnelIQ</h1>
+  <img src="/static/logo.png" alt="FunnelIQ by Northbound Media" class="logo-mark" style="height:40px;">
   <p class="sub">Sign in to the Northbound Media dashboard.</p>
   <form id="login-form">
     <label for="email">Email</label>
@@ -92,117 +228,258 @@
   </form>
 </div>
 
-<div id="dash-card" class="card dash" hidden>
-  <div class="dash-head">
-    <h1>FunnelIQ</h1>
-    <span id="whoami"></span>
-  </div>
-  <p class="sub">Signed in. This tool is not open to the public -- Row Level Security on the database only allows reads from an authenticated session like this one.</p>
-  <button class="secondary" id="signout-btn">Sign out</button>
-  <div id="data-status" class="sub" style="margin-top:18px;"></div>
-  <table id="data-table" hidden>
-    <thead><tr><th>ad_budget</th><th>num_leads</th><th>closed</th><th>purchased</th><th>upsell</th></tr></thead>
-    <tbody id="data-rows"></tbody>
-  </table>
-
-  <div class="section-title">Predict customer lifetime (Package 2 model)</div>
-  <p class="sub" style="margin-top:0;">Enter a customer's early funnel data to predict how many months they'll stay. Served by a CatBoost model trained offline (see <code>03_Package2_LTV_Regression.ipynb</code>).</p>
-  <form id="predict-form" class="field-grid">
-    <div><label for="f_ad_budget">ad_budget</label><input id="f_ad_budget" type="number" value="2500" required></div>
-    <div><label for="f_num_leads">num_leads</label><input id="f_num_leads" type="number" value="36" required></div>
-    <div><label for="f_leads_answered">leads_answered</label><input id="f_leads_answered" type="number" value="24" required></div>
-    <div><label for="f_leads_not_answered">leads_not_answered</label><input id="f_leads_not_answered" type="number" value="12" required></div>
-    <div><label for="f_followup_1">followup_1</label><input id="f_followup_1" type="number" value="19" required></div>
-    <div><label for="f_followup_2">followup_2</label><input id="f_followup_2" type="number" value="14" required></div>
-    <div><label for="f_followup_3">followup_3</label><input id="f_followup_3" type="number" value="11" required></div>
-    <div><label for="f_followup_4">followup_4</label><input id="f_followup_4" type="number" value="10" required></div>
-    <div><label for="f_followup_5">followup_5</label><input id="f_followup_5" type="number" value="7" required></div>
-    <div><label for="f_not_closed">not_closed</label><input id="f_not_closed" type="number" value="5" required></div>
-    <div><label for="f_closed">closed</label><input id="f_closed" type="number" value="2" required></div>
-    <div><label for="f_calls_to_closed">calls_to_closed</label><input id="f_calls_to_closed" type="number" value="2" required></div>
-    <div><label for="f_calls_to_not_closed">calls_to_not_closed</label><input id="f_calls_to_not_closed" type="number" value="4" required></div>
-    <div><label for="f_customer_acquisition_cost">customer_acquisition_cost</label><input id="f_customer_acquisition_cost" type="number" value="1250" required></div>
-    <div><label for="f_purchased">purchased (0/1)</label><input id="f_purchased" type="number" min="0" max="1" value="1" required></div>
-  </form>
-  <button class="predict-btn" id="predict-btn" style="width:auto; padding:10px 20px;">Predict LTV</button>
-  <div id="predict-result" class="predict-result" hidden></div>
-
-  <div class="section-title">Predict upsell likelihood (Package 3 model)</div>
-  <p class="sub" style="margin-top:0;">For a customer who has already purchased, estimate the likelihood they'll buy additional services. Served by a CatBoost model trained offline (see <code>04_Package3_Upsell_Classification.ipynb</code>).</p>
-  <form id="upsell-form" class="field-grid">
-    <div><label for="u_ad_budget">ad_budget</label><input id="u_ad_budget" type="number" value="2500" required></div>
-    <div><label for="u_num_leads">num_leads</label><input id="u_num_leads" type="number" value="36" required></div>
-    <div><label for="u_leads_answered">leads_answered</label><input id="u_leads_answered" type="number" value="24" required></div>
-    <div><label for="u_leads_not_answered">leads_not_answered</label><input id="u_leads_not_answered" type="number" value="12" required></div>
-    <div><label for="u_followup_1">followup_1</label><input id="u_followup_1" type="number" value="19" required></div>
-    <div><label for="u_followup_2">followup_2</label><input id="u_followup_2" type="number" value="14" required></div>
-    <div><label for="u_followup_3">followup_3</label><input id="u_followup_3" type="number" value="11" required></div>
-    <div><label for="u_followup_4">followup_4</label><input id="u_followup_4" type="number" value="10" required></div>
-    <div><label for="u_followup_5">followup_5</label><input id="u_followup_5" type="number" value="7" required></div>
-    <div><label for="u_not_closed">not_closed</label><input id="u_not_closed" type="number" value="5" required></div>
-    <div><label for="u_closed">closed</label><input id="u_closed" type="number" value="2" required></div>
-    <div><label for="u_calls_to_closed">calls_to_closed</label><input id="u_calls_to_closed" type="number" value="2" required></div>
-    <div><label for="u_calls_to_not_closed">calls_to_not_closed</label><input id="u_calls_to_not_closed" type="number" value="4" required></div>
-    <div><label for="u_customer_acquisition_cost">customer_acquisition_cost</label><input id="u_customer_acquisition_cost" type="number" value="1250" required></div>
-  </form>
-  <button class="predict-btn" id="upsell-btn" style="width:auto; padding:10px 20px;">Predict Upsell</button>
-  <div id="upsell-result" class="predict-result" hidden></div>
-
-  <div class="section-title">Super customer score (Package 4 model)</div>
-  <p class="sub" style="margin-top:0;">Score a new customer using only early funnel data -- before any calls, follow-ups, or closing has happened. Served by a tuned CatBoost model with an engineered budget-tier feature (see <code>05_Package4_SuperCustomer_Score.ipynb</code>).</p>
-  <form id="super-form" class="field-grid">
-    <div><label for="s_ad_budget">ad_budget</label><input id="s_ad_budget" type="number" value="2500" required></div>
-    <div><label for="s_num_leads">num_leads</label><input id="s_num_leads" type="number" value="36" required></div>
-    <div><label for="s_leads_answered">leads_answered</label><input id="s_leads_answered" type="number" value="24" required></div>
-    <div><label for="s_leads_not_answered">leads_not_answered</label><input id="s_leads_not_answered" type="number" value="12" required></div>
-  </form>
-  <button class="predict-btn" id="super-btn" style="width:auto; padding:10px 20px;">Score Customer</button>
-  <div id="super-result" class="predict-result" hidden></div>
-
-  <div class="section-title">Follow-up dropout analysis (Package 5)</div>
-  <p class="sub" style="margin-top:0;">Testing the sales manager's claim: "after the 3rd follow-up, we're just wasting time." Aggregate dropout rate at each stage, computed from all 3,490 campaigns (see <code>06_Package5_Followup_Dropout.ipynb</code>).</p>
-  <div class="dropout-chart">
-    <div class="dropout-row">
-      <div class="dropout-label">Initial (no answer)</div>
-      <div class="dropout-track"><div class="dropout-fill" style="width:100%"></div></div>
-      <div class="dropout-pct">39.5%</div>
-    </div>
-    <div class="dropout-row">
-      <div class="dropout-label">Stage 1 (answered → FU1)</div>
-      <div class="dropout-track"><div class="dropout-fill" style="width:55%"></div></div>
-      <div class="dropout-pct">21.7%</div>
-    </div>
-    <div class="dropout-row">
-      <div class="dropout-label">Stage 2 (FU1 → FU2)</div>
-      <div class="dropout-track"><div class="dropout-fill" style="width:65%"></div></div>
-      <div class="dropout-pct">25.7%</div>
-    </div>
-    <div class="dropout-row">
-      <div class="dropout-label">Stage 3 (FU2 → FU3)</div>
-      <div class="dropout-track"><div class="dropout-fill" style="width:47%"></div></div>
-      <div class="dropout-pct">18.6%</div>
-    </div>
-    <div class="dropout-row">
-      <div class="dropout-label">Stage 4 (FU3 → FU4) — lowest</div>
-      <div class="dropout-track"><div class="dropout-fill" style="width:26%"></div></div>
-      <div class="dropout-pct">10.4%</div>
-    </div>
-    <div class="dropout-row">
-      <div class="dropout-label">Stage 5 (FU4 → FU5) — the real leak</div>
-      <div class="dropout-track"><div class="dropout-fill highlight" style="width:74%"></div></div>
-      <div class="dropout-pct">29.2%</div>
+<div id="dash-card" class="dash-page" hidden>
+  <div class="topbar">
+    <img src="/static/logo.png" alt="FunnelIQ by Northbound Media" class="logo-mark">
+    <div class="topbar-right">
+      <span id="whoami">Northbound Media</span>
+      <button class="secondary" id="signout-btn">Sign out</button>
     </div>
   </div>
-  <div class="recommendation">
-    <b>Recommendation: no, don't cut follow-ups short.</b> Dropout is <i>lowest</i> right after the 3rd follow-up (10.4%, the stickiest point in the whole funnel) — the opposite of what the manager's claim predicts. Every recorded closed deal in this dataset required completing all 5 follow-up rounds, so stopping after round 3 would forfeit 100% of closes. The real leak is Stage 5 (attrition during the push from follow-up 4 to 5, 29.2%) — but it's remarkably uniform across every budget tier and campaign (std only 7.2%, no meaningful correlation to anything else recorded), so it isn't a segment this data can isolate further. That points to an operational check (call quality, timing, or script at round 5), not another quantitative cut of these columns.
+  <div class="page-intro">
+    <h2>Funnel Intelligence</h2>
+    <p>Predictive insights and decision tools built from Northbound Media's funnel data.</p>
   </div>
 
-  <div class="section-title">Budget allocation simulator (Package 6)</div>
-  <p class="sub" style="margin-top:0;">Northbound has ₪50,000/month. Compare the brief's four candidate allocation strategies for expected total profit, using a profit model + typical funnel profile per budget level (see <code>07_Package6_Budget_Optimization.ipynb</code>).</p>
-  <button class="predict-btn" id="simulate-btn" style="width:auto; padding:10px 20px;">Compare Strategies</button>
-  <div id="simulate-status" class="sub" style="margin-top:10px;"></div>
-  <div id="simulate-chart" class="dropout-chart" hidden></div>
-  <div id="simulate-recommendation" class="recommendation" hidden></div>
+  <nav class="tool-nav">
+    <div class="tool-nav-row">
+      <span class="tool-nav-label">Predict</span>
+      <button class="tool-tab" type="button" data-tool="super-customer">
+        <svg class="tool-tab-icon" viewBox="0 0 18 18" fill="currentColor"><path d="M9 1.5l2.2 4.6 5 .7-3.6 3.6.9 5-4.5-2.4-4.5 2.4.9-5-3.6-3.6 5-.7z"/></svg>
+        Super-Customer
+      </button>
+      <button class="tool-tab" type="button" data-tool="lifetime">
+        <svg class="tool-tab-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,13 7,8 10,11 16,4"/><polyline points="11,4 16,4 16,9"/></svg>
+        Lifetime
+      </button>
+      <button class="tool-tab" type="button" data-tool="upsell">
+        <svg class="tool-tab-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="14" x2="14" y2="4"/><polyline points="6,4 14,4 14,12"/></svg>
+        Upsell
+      </button>
+      <span class="tool-nav-divider"></span>
+      <span class="tool-nav-label">Optimize</span>
+      <button class="tool-tab" type="button" data-tool="dropout">
+        <svg class="tool-tab-icon" viewBox="0 0 18 18" fill="currentColor"><path d="M2 3h14l-5 7v5l-4-2v-3z"/></svg>
+        Dropout Analysis
+      </button>
+      <button class="tool-tab" type="button" data-tool="budget">
+        <svg class="tool-tab-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="9" cy="9" r="7"/><path d="M9 5.5v7M11 7c0-1-1-1.5-2-1.5s-2 .5-2 1.5 1 1.3 2 1.5 2 .5 2 1.5-1 1.5-2 1.5-2-.5-2-1.5"/></svg>
+        Budget Allocation
+      </button>
+    </div>
+  </nav>
+
+  <div class="tile-grid">
+
+  <div class="tile wide" id="super-tile" data-tool="super-customer">
+  <div class="tile-head">
+    <span class="tile-icon"><svg viewBox="0 0 18 18" fill="currentColor"><path d="M9 1.5l2.2 4.6 5 .7-3.6 3.6.9 5-4.5-2.4-4.5 2.4.9-5-3.6-3.6 5-.7z"/></svg></span>
+    <div class="section-title">Super-Customer Score</div>
+  </div>
+  <p class="sub" style="margin-top:0; margin-bottom:2px;">Predicts how likely a new lead is to become a high-value, long-term customer based on the performance of the campaign they came from.</p>
+  <button type="button" id="super-info-btn" class="info-link">&#9432; How is this calculated?</button>
+  <div id="super-info-pop" class="info-pop" hidden>Since no lead-level interactions have happened yet, the score uses campaign-level signals such as campaign budget, lead volume, and response performance.</div>
+  <div class="split-row" style="align-items:flex-start; margin-top:16px;">
+    <div class="split-left">
+      <div class="section-title" style="font-size:14px; margin-bottom:2px;">Campaign signals</div>
+      <p class="sub" style="margin:0 0 12px; font-size:12.5px;">Used to score this lead before any lead-level activity occurs.</p>
+      <form id="super-form" class="field-grid">
+        <div><label for="s_ad_budget">Campaign Budget (₪)</label><input id="s_ad_budget" type="number" value="2500" min="0" required></div>
+        <div><label for="s_num_leads">Total Campaign Leads</label><input id="s_num_leads" type="number" value="36" min="0" required></div>
+        <div><label for="s_leads_answered">Leads Answered</label><input id="s_leads_answered" type="number" value="24" min="0" max="36" required></div>
+      </form>
+      <div id="super-derived" class="derived-metrics"></div>
+      <div id="super-error" class="error" style="min-height:auto; margin-top:4px;"></div>
+      <button class="predict-btn" id="super-btn" style="width:auto; padding:10px 20px;">Calculate Score</button>
+    </div>
+    <div class="split-right">
+      <div id="super-placeholder" class="score-panel score-placeholder">Enter campaign details and calculate to see this lead's score.</div>
+      <div id="super-result" class="score-panel" hidden></div>
+    </div>
+  </div>
+  </div>
+
+  <div class="tile wide" id="tool-lifetime" data-tool="lifetime">
+  <div class="tile-head">
+    <span class="tile-icon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,13 7,8 10,11 16,4"/><polyline points="11,4 16,4 16,9"/></svg></span>
+    <div class="section-title">Customer Lifetime Prediction</div>
+  </div>
+  <p class="sub" style="margin-top:0; margin-bottom:2px;">Predicts how long a customer is likely to stay based on campaign and conversion behavior.</p>
+  <button type="button" id="ltv-info-btn" class="info-link">&#9432; How is this calculated?</button>
+  <div id="ltv-info-pop" class="info-pop" hidden>Uses campaign, funnel-progression, and conversion signals from the deal. Calls-to-close is an especially strong predictor -- customers who close quickly tend to stay far longer. Customers in this dataset typically stay around 21 months.</div>
+  <div class="split-row" style="align-items:flex-start; margin-top:16px;">
+    <div class="split-left">
+      <form id="predict-form">
+        <div class="input-group-title">Campaign Context</div>
+        <div class="field-grid" style="grid-template-columns:repeat(3,1fr);">
+          <div><label for="f_ad_budget">Campaign Budget (₪)</label><input id="f_ad_budget" type="number" min="0" value="2500" required></div>
+          <div><label for="f_num_leads">Total Campaign Leads</label><input id="f_num_leads" type="number" min="0" value="36" required></div>
+          <div><label for="f_leads_answered">Leads Answered</label><input id="f_leads_answered" type="number" min="0" max="36" value="24" required></div>
+        </div>
+        <div id="ltv-answer-derived" class="derived-metrics"></div>
+
+        <div class="input-group-title">Funnel Progression</div>
+        <div class="field-grid" style="grid-template-columns:repeat(5,1fr);">
+          <div><label for="f_followup_1">Follow-up 1</label><input id="f_followup_1" type="number" min="0" value="19" required></div>
+          <div><label for="f_followup_2">Follow-up 2</label><input id="f_followup_2" type="number" min="0" value="14" required></div>
+          <div><label for="f_followup_3">Follow-up 3</label><input id="f_followup_3" type="number" min="0" value="11" required></div>
+          <div><label for="f_followup_4">Follow-up 4</label><input id="f_followup_4" type="number" min="0" value="10" required></div>
+          <div><label for="f_followup_5">Follow-up 5</label><input id="f_followup_5" type="number" min="0" value="7" required></div>
+        </div>
+        <div id="ltv-funnel-trend"></div>
+        <div id="ltv-retention-derived" class="derived-metrics"></div>
+
+        <div class="input-group-title">Conversion</div>
+        <div class="field-grid" style="grid-template-columns:repeat(3,1fr);">
+          <div><label for="f_closed">Deals Closed</label><input id="f_closed" type="number" min="0" value="2" required></div>
+          <div><label for="f_calls_to_closed">Avg. Calls to Close</label><input id="f_calls_to_closed" type="number" min="0" value="2" required></div>
+          <div><label for="f_calls_to_not_closed">Avg. Calls (Not Closed)</label><input id="f_calls_to_not_closed" type="number" min="0" value="4" required></div>
+          <div><label for="f_customer_acquisition_cost">Acquisition Cost (₪)</label><input id="f_customer_acquisition_cost" type="number" min="0" value="1250" required></div>
+          <div>
+            <label>Purchased</label>
+            <div class="toggle-group" id="f_purchased_group" data-value="1">
+              <button type="button" class="toggle-btn" data-val="0">No</button>
+              <button type="button" class="toggle-btn active" data-val="1">Yes</button>
+            </div>
+          </div>
+        </div>
+        <div id="ltv-conversion-derived" class="derived-metrics"></div>
+      </form>
+      <button class="predict-btn" id="predict-btn" style="width:auto; padding:10px 20px; margin-top:16px;">Predict Lifetime</button>
+      <div id="ltv-error" class="error" style="min-height:auto; margin-top:6px;"></div>
+    </div>
+    <div class="split-right">
+      <div id="ltv-placeholder" class="score-panel score-placeholder">Enter campaign and conversion details, then predict to see this customer's expected lifetime.</div>
+      <div id="predict-result" class="score-panel" hidden></div>
+    </div>
+  </div>
+  </div>
+
+  <div class="tile wide" id="tool-upsell" data-tool="upsell">
+  <div class="tile-head">
+    <span class="tile-icon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="14" x2="14" y2="4"/><polyline points="6,4 14,4 14,12"/></svg></span>
+    <div class="section-title">Upsell Likelihood</div>
+  </div>
+  <p class="sub" style="margin-top:0; margin-bottom:2px;">Predicts how likely an existing customer is to purchase additional services based on campaign and conversion behavior.</p>
+  <button type="button" id="upsell-info-btn" class="info-link">&#9432; How is this calculated?</button>
+  <div id="upsell-info-pop" class="info-pop" hidden>Applies to customers who have already purchased. About 46% of purchasers upsell overall. The model uses campaign and conversion signals -- faster, lower-cost conversions are the strongest predictors.</div>
+  <div class="split-row" style="align-items:flex-start; margin-top:16px;">
+    <div class="split-left">
+      <form id="upsell-form">
+        <div class="input-group-title">Campaign Context</div>
+        <div class="field-grid" style="grid-template-columns:repeat(3,1fr);">
+          <div><label for="u_ad_budget">Campaign Budget (₪)</label><input id="u_ad_budget" type="number" min="0" value="2500" required></div>
+          <div><label for="u_num_leads">Total Campaign Leads</label><input id="u_num_leads" type="number" min="0" value="36" required></div>
+          <div><label for="u_leads_answered">Leads Answered</label><input id="u_leads_answered" type="number" min="0" max="36" value="24" required></div>
+        </div>
+        <div id="upsell-answer-derived" class="derived-metrics"></div>
+
+        <div class="input-group-title">Funnel Progression</div>
+        <div class="field-grid" style="grid-template-columns:repeat(5,1fr);">
+          <div><label for="u_followup_1">Follow-up 1</label><input id="u_followup_1" type="number" min="0" value="19" required></div>
+          <div><label for="u_followup_2">Follow-up 2</label><input id="u_followup_2" type="number" min="0" value="14" required></div>
+          <div><label for="u_followup_3">Follow-up 3</label><input id="u_followup_3" type="number" min="0" value="11" required></div>
+          <div><label for="u_followup_4">Follow-up 4</label><input id="u_followup_4" type="number" min="0" value="10" required></div>
+          <div><label for="u_followup_5">Follow-up 5</label><input id="u_followup_5" type="number" min="0" value="7" required></div>
+        </div>
+        <div id="upsell-funnel-trend"></div>
+        <div id="upsell-retention-derived" class="derived-metrics"></div>
+
+        <div class="input-group-title">Conversion</div>
+        <div class="field-grid" style="grid-template-columns:repeat(2,1fr);">
+          <div><label for="u_closed">Deals Closed</label><input id="u_closed" type="number" min="0" value="2" required></div>
+          <div><label for="u_calls_to_closed">Avg. Calls to Close</label><input id="u_calls_to_closed" type="number" min="0" value="2" required></div>
+          <div><label for="u_calls_to_not_closed">Avg. Calls (Not Closed)</label><input id="u_calls_to_not_closed" type="number" min="0" value="4" required></div>
+          <div><label for="u_customer_acquisition_cost">Acquisition Cost (₪)</label><input id="u_customer_acquisition_cost" type="number" min="0" value="1250" required></div>
+        </div>
+        <div id="upsell-conversion-derived" class="derived-metrics"></div>
+      </form>
+      <button class="predict-btn" id="upsell-btn" style="width:auto; padding:10px 20px; margin-top:16px;">Predict Upsell</button>
+      <div id="upsell-error" class="error" style="min-height:auto; margin-top:6px;"></div>
+    </div>
+    <div class="split-right">
+      <div id="upsell-placeholder" class="score-panel score-placeholder">Enter campaign and conversion details, then predict to see this customer's upsell likelihood.</div>
+      <div id="upsell-result" class="score-panel" hidden></div>
+    </div>
+  </div>
+  </div>
+
+  <div class="tile wide" id="tool-dropout" data-tool="dropout">
+  <div class="tile-head">
+    <span class="tile-icon"><svg viewBox="0 0 18 18" fill="currentColor"><path d="M2 3h14l-5 7v5l-4-2v-3z"/></svg></span>
+    <div class="section-title">Follow-up Dropout Analysis</div>
+  </div>
+  <p class="sub" style="margin-top:0;">Shows where leads are lost between follow-up stages across 3,490 campaigns.</p>
+  <div class="split-row" style="align-items:flex-start;">
+  <div class="split-left">
+  <svg class="line-chart" viewBox="0 0 1080 250" xmlns="http://www.w3.org/2000/svg">
+    <line x1="25" y1="190" x2="1055" y2="190" stroke="#e2e6ed" stroke-width="1"/>
+
+    <rect x="971" y="32" width="98" height="164" rx="16" fill="#2f6bff" fill-opacity="0.07"/>
+
+    <rect x="25" y="34.0" width="70" height="156.0" rx="6" fill="#2f6bff"/>
+    <rect x="217" y="104.3" width="70" height="85.7" rx="6" fill="#2f6bff"/>
+    <rect x="409" y="88.5" width="70" height="101.5" rx="6" fill="#2f6bff"/>
+    <rect x="601" y="116.5" width="70" height="73.5" rx="6" fill="#2f6bff"/>
+    <rect x="793" y="148.9" width="70" height="41.1" rx="6" fill="#a9c4ff"/>
+    <rect x="985" y="74.6" width="70" height="115.4" rx="6" fill="#1e3a8a"/>
+
+    <text x="60" y="20.0" text-anchor="middle" font-family="Manrope, sans-serif" font-size="20" font-weight="700" fill="#0f172a">39.5%</text>
+    <text x="252" y="90.3" text-anchor="middle" font-family="Manrope, sans-serif" font-size="20" font-weight="700" fill="#0f172a">21.7%</text>
+    <text x="444" y="74.5" text-anchor="middle" font-family="Manrope, sans-serif" font-size="20" font-weight="700" fill="#0f172a">25.7%</text>
+    <text x="636" y="102.5" text-anchor="middle" font-family="Manrope, sans-serif" font-size="20" font-weight="700" fill="#0f172a">18.6%</text>
+    <text x="828" y="134.9" text-anchor="middle" font-family="Manrope, sans-serif" font-size="19" font-weight="600" fill="#47536b">10.4%</text>
+    <text x="1020" y="59.6" text-anchor="middle" font-family="Manrope, sans-serif" font-size="24" font-weight="800" fill="#1e3a8a">29.2%</text>
+
+
+    <text x="60" y="214" text-anchor="middle" font-family="Manrope, sans-serif" font-size="14" fill="#8993a8">Initial &#8594;</text>
+    <text x="60" y="234" text-anchor="middle" font-family="Manrope, sans-serif" font-size="14" fill="#8993a8">Answered</text>
+    <text x="252" y="214" text-anchor="middle" font-family="Manrope, sans-serif" font-size="14" fill="#8993a8">Answered &#8594;</text>
+    <text x="252" y="234" text-anchor="middle" font-family="Manrope, sans-serif" font-size="14" fill="#8993a8">F/U 1</text>
+    <text x="444" y="214" text-anchor="middle" font-family="Manrope, sans-serif" font-size="14" fill="#8993a8">F/U 1 &#8594;</text>
+    <text x="444" y="234" text-anchor="middle" font-family="Manrope, sans-serif" font-size="14" fill="#8993a8">F/U 2</text>
+    <text x="636" y="214" text-anchor="middle" font-family="Manrope, sans-serif" font-size="14" fill="#8993a8">F/U 2 &#8594;</text>
+    <text x="636" y="234" text-anchor="middle" font-family="Manrope, sans-serif" font-size="14" fill="#8993a8">F/U 3</text>
+    <text x="828" y="214" text-anchor="middle" font-family="Manrope, sans-serif" font-size="14" fill="#8993a8">F/U 3 &#8594;</text>
+    <text x="828" y="234" text-anchor="middle" font-family="Manrope, sans-serif" font-size="14" fill="#8993a8">F/U 4</text>
+    <text x="1020" y="214" text-anchor="middle" font-family="Manrope, sans-serif" font-size="14" font-weight="700" fill="#10131c">F/U 4 &#8594;</text>
+    <text x="1020" y="234" text-anchor="middle" font-family="Manrope, sans-serif" font-size="14" font-weight="700" fill="#10131c">F/U 5</text>
+  </svg>
+  </div>
+  <div class="split-right" style="align-items:flex-start;">
+  <div class="recommendation" style="margin-top:0; width:100%; border-left-color:var(--brand);">
+    <div class="reco-headline">Don't cut follow-ups short</div>
+    <div class="reco-hero">
+      <div class="reco-hero-value">29.2%</div>
+      <div class="reco-hero-caption">late-stage dropout</div>
+      <div class="reco-hero-transition">F/U 4 &#8594; F/U 5</div>
+      <div class="reco-hero-tag">Largest late-stage leak</div>
+    </div>
+    <div class="driver-section">
+      <div class="finding"><b>F/U 3 &#8594; F/U 4 is the stickiest transition.</b><p>Only 10.4% drop out here.</p></div>
+      <div class="finding" style="margin-top:10px;"><b>All recorded closed deals occurred among leads that reached Follow-up 5.</b><p>Stopping earlier would have missed all recorded closes.</p></div>
+    </div>
+    <div class="next-step">
+      <div class="driver-title">NEXT STEP</div>
+      <p>Investigate call quality, timing, or messaging around Follow-up 5. The available campaign data does not isolate a specific segment driving the leak.</p>
+    </div>
+  </div>
+  </div>
+  </div>
+  </div>
+
+  <div class="tile wide" id="tool-budget" data-tool="budget">
+  <div class="tile-head">
+    <span class="tile-icon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="9" cy="9" r="7"/><path d="M9 5.5v7M11 7c0-1-1-1.5-2-1.5s-2 .5-2 1.5 1 1.3 2 1.5 2 .5 2 1.5-1 1.5-2 1.5-2-.5-2-1.5"/></svg></span>
+    <div class="section-title">Budget Allocation Simulator</div>
+  </div>
+  <p class="sub" style="margin-top:0; margin-bottom:6px;">Compare how different ways of allocating Northbound's ₪50,000 monthly budget affect expected profit.</p>
+  <div id="simulate-status" class="sub"></div>
+  <div id="simulate-chart" hidden></div>
+  <div id="simulate-recommendation" class="recommendation" style="margin-top:8px; padding:10px 14px; font-size:13px;" hidden></div>
+  </div>
+
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -216,47 +493,168 @@
 
   const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+  // Tool workspace navigation: shows exactly one tool tile at a time via the
+  // `hidden` attribute (never removes/re-renders tiles), so switching tabs
+  // preserves whatever the user already typed or calculated in every tool.
+  // Independent of auth state -- the tiles just sit inside the hidden
+  // dash-card until sign-in, same as before.
+  (function initToolNav() {
+    const tabs = Array.from(document.querySelectorAll(".tool-tab"));
+    const panels = Array.from(document.querySelectorAll(".tile-grid > [data-tool]"));
+    const validTools = panels.map((p) => p.dataset.tool);
+
+    function selectTool(tool, updateUrl) {
+      if (!validTools.includes(tool)) tool = "super-customer";
+      panels.forEach((p) => { p.hidden = p.dataset.tool !== tool; });
+      tabs.forEach((t) => t.classList.toggle("active", t.dataset.tool === tool));
+      if (updateUrl) {
+        const url = new URL(window.location.href);
+        url.searchParams.set("tool", tool);
+        window.history.replaceState({}, "", url);
+      }
+    }
+
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => selectTool(tab.dataset.tool, true));
+    });
+
+    const initialTool = new URLSearchParams(window.location.search).get("tool");
+    selectTool(initialTool || "super-customer", false);
+  })();
+
+  // Segmented semicircle gauge (16 discrete rounded bars, not a continuous arc),
+  // reusable for any 0-100 score. Colors interpolate darker->lighter blue across
+  // the filled segments only; unfilled segments stay light gray.
+  function renderScoreGauge(value, label, segments, extraLine, extraColor, options) {
+    segments = segments || 16;
+    options = options || {};
+    const cx = 120, cy = 122, rOuter = 110, rInner = 80, barW = 15;
+    const pct = Math.max(0, Math.min(100, value));
+    const filled = Math.round((pct / 100) * segments);
+    const darkBlue = [30, 58, 138];
+    const lightBlue = [143, 192, 255];
+    const lerp = (t) => {
+      const r = Math.round(darkBlue[0] + (lightBlue[0] - darkBlue[0]) * t);
+      const g = Math.round(darkBlue[1] + (lightBlue[1] - darkBlue[1]) * t);
+      const b = Math.round(darkBlue[2] + (lightBlue[2] - darkBlue[2]) * t);
+      return `rgb(${r},${g},${b})`;
+    };
+    let bars = "";
+    for (let i = 0; i < segments; i++) {
+      const angle = -90 + i * (180 / (segments - 1));
+      const fill = i < filled ? lerp(filled > 1 ? i / (filled - 1) : 0) : "#eef1f5";
+      bars += `<rect x="${cx - barW / 2}" y="${cy - rOuter}" width="${barW}" height="${rOuter - rInner}" rx="${barW / 2}" fill="${fill}" transform="rotate(${angle} ${cx} ${cy})"></rect>`;
+    }
+    const extra = extraLine
+      ? `<text x="${cx}" y="${cy + 16}" text-anchor="middle" font-family="Manrope, sans-serif" font-size="13" font-weight="700" letter-spacing="0.03em" fill="${extraColor || "#2f6bff"}">${extraLine}</text>`
+      : "";
+    // Optional secondary benchmark notch on the same arc (e.g. the typical-purchaser
+    // upsell rate) -- a real dataset baseline, positioned at its true angle, drawn
+    // muted so it never competes with the actual prediction.
+    let benchmark = "";
+    if (options.benchmarkPct != null) {
+      const bAngle = ((-90 + (options.benchmarkPct / 100) * 180) * Math.PI) / 180;
+      const rTick1 = rInner - 4, rTick2 = rOuter + 8, rLabel = rOuter + 20;
+      const x1 = cx + rTick1 * Math.sin(bAngle), y1 = cy - rTick1 * Math.cos(bAngle);
+      const x2 = cx + rTick2 * Math.sin(bAngle), y2 = cy - rTick2 * Math.cos(bAngle);
+      const lx = cx + rLabel * Math.sin(bAngle), ly = cy - rLabel * Math.cos(bAngle);
+      benchmark = `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>
+        <line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="#64748b" stroke-width="2.5" stroke-linecap="round"/>
+        <text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="middle" font-family="Manrope, sans-serif" font-size="10.5" fill="#64748b">${options.benchmarkLabel || ""}</text>`;
+    }
+    const topPad = options.benchmarkPct != null ? -26 : 0;
+    return `<svg class="score-gauge" viewBox="0 ${topPad} 240 ${(extraLine ? 150 : 136) - topPad}" xmlns="http://www.w3.org/2000/svg">
+      ${bars}
+      ${benchmark}
+      <text x="${cx}" y="${cy - 28}" text-anchor="middle" font-family="Manrope, sans-serif" font-size="38" font-weight="700" fill="#0f172a">${pct}${options.suffix || ""}</text>
+      <text x="${cx}" y="${cy - 6}" text-anchor="middle" font-family="Manrope, sans-serif" font-size="13" fill="#8993a8">${label}</text>
+      ${extra}
+    </svg>`;
+  }
+
+  // Strategy-curve line chart for the budget simulator: reveals the
+  // concentrated-vs-fragmented sweet spot rather than a flat bar comparison.
+  function renderStrategyChart(strategies, results) {
+    const W = 980, H = 262;
+    const plotLeft = 66, plotRight = 964, plotTop = 68, plotBottom = 193;
+    const domainMax = 650000;
+    const xStep = (plotRight - plotLeft) / (strategies.length - 1);
+    const yFor = (v) => plotBottom - (v / domainMax) * (plotBottom - plotTop);
+
+    const pts = strategies.map((s, i) => {
+      const r = results.find((res) => res.label === s.label);
+      return { x: plotLeft + i * xStep, y: yFor(r.profit), profit: r.profit, s };
+    });
+    const winnerIdx = pts.reduce((best, p, i) => (p.profit > pts[best].profit ? i : best), 0);
+    const winner = pts[winnerIdx];
+
+    const linePath = "M" + pts.map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" L");
+    const areaPath = `${linePath} L${pts[pts.length - 1].x.toFixed(1)},${plotBottom} L${pts[0].x.toFixed(1)},${plotBottom} Z`;
+
+    const gridlines = [0, 200000, 400000, 600000].map((t) => {
+      const y = yFor(t);
+      const label = t === 0 ? "₪0" : `₪${t / 1000}K`;
+      return `<line x1="${plotLeft}" y1="${y}" x2="${plotRight}" y2="${y}" stroke="#eef1f5" stroke-width="1"/>
+        <text x="${plotLeft - 10}" y="${y + 3.5}" text-anchor="end" font-family="Manrope, sans-serif" font-size="11.5" fill="#a3acbd">${label}</text>`;
+    }).join("");
+
+    const markers = pts.map((p, i) => i === winnerIdx
+      ? `<circle cx="${p.x}" cy="${p.y}" r="13" fill="#2f6bff" fill-opacity="0.13"/>
+         <circle cx="${p.x}" cy="${p.y}" r="5.2" fill="#2f6bff" stroke="#ffffff" stroke-width="2"/>`
+      : `<circle cx="${p.x}" cy="${p.y}" r="3.3" fill="#a9c4ff" stroke="#2f6bff" stroke-width="1.2"/>`
+    ).join("");
+
+    const xLabels = pts.map((p, i) => `
+      <text x="${p.x}" y="${plotBottom + 22}" text-anchor="middle" font-family="Manrope, sans-serif" font-size="13" font-weight="${i === winnerIdx ? 700 : 600}" fill="${i === winnerIdx ? "#10131c" : "#47536b"}">${p.s.xLabel1}</text>
+      <text x="${p.x}" y="${plotBottom + 37}" text-anchor="middle" font-family="Manrope, sans-serif" font-size="11.5" fill="#a3acbd">${p.s.xLabel2}</text>
+    `).join("");
+
+    const calloutW = 118, calloutH = 50;
+    const calloutBottom = winner.y - 10;
+    const calloutTop = calloutBottom - calloutH;
+    const calloutCx = winner.x;
+    const callout = `
+      <rect x="${calloutCx - calloutW / 2}" y="${calloutTop}" width="${calloutW}" height="${calloutH}" rx="10" fill="#ffffff" stroke="#e2e6ed" stroke-width="1" filter="url(#calloutShadow)"/>
+      <text x="${calloutCx}" y="${calloutTop + 20}" text-anchor="middle" font-family="Manrope, sans-serif" font-size="10.5" font-weight="700" letter-spacing="0.05em" fill="#2f6bff">BEST RETURN</text>
+      <text x="${calloutCx}" y="${calloutTop + 39}" text-anchor="middle" font-family="Manrope, sans-serif" font-size="18" font-weight="800" fill="#1e3a8a">₪${winner.profit.toLocaleString()}</text>`;
+
+    return `<svg class="strategy-chart" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="strategyGlow" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#2f6bff" stop-opacity="0.11"/>
+          <stop offset="30%" stop-color="#2f6bff" stop-opacity="0.03"/>
+          <stop offset="60%" stop-color="#2f6bff" stop-opacity="0"/>
+        </linearGradient>
+        <filter id="calloutShadow" x="-40%" y="-40%" width="180%" height="220%">
+          <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#0f172a" flood-opacity="0.14"/>
+        </filter>
+      </defs>
+      ${gridlines}
+      <path d="${areaPath}" fill="url(#strategyGlow)"/>
+      <path d="${linePath}" fill="none" stroke="#2f6bff" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"/>
+      ${markers}
+      ${xLabels}
+      ${callout}
+      <text x="${(plotLeft + plotRight) / 2}" y="${plotBottom + 61}" text-anchor="middle" font-family="Manrope, sans-serif" font-size="12" fill="#a3acbd">More concentrated &#8592; Budget distribution &#8594; More fragmented</text>
+    </svg>`;
+  }
+
   const loginCard = document.getElementById("login-card");
   const dashCard = document.getElementById("dash-card");
   const loginForm = document.getElementById("login-form");
   const loginError = document.getElementById("login-error");
   const whoami = document.getElementById("whoami");
   const signoutBtn = document.getElementById("signout-btn");
-  const dataStatus = document.getElementById("data-status");
-  const dataTable = document.getElementById("data-table");
-  const dataRows = document.getElementById("data-rows");
 
   function showDashboard(session) {
     loginCard.hidden = true;
     dashCard.hidden = false;
-    whoami.textContent = session.user.email;
-    loadSample(session);
+    runBudgetSimulation(session);
   }
 
   function showLogin() {
     loginCard.hidden = false;
     dashCard.hidden = true;
-    dataTable.hidden = true;
-    dataRows.innerHTML = "";
-  }
-
-  async function loadSample(session) {
-    dataStatus.textContent = "Loading a sample from Supabase...";
-    const { data, error, count } = await supabaseClient
-      .from("funnel_records")
-      .select("ad_budget, num_leads, closed, purchased, upsell", { count: "exact" })
-      .limit(5);
-
-    if (error) {
-      dataStatus.textContent = "Could not read funnel_records: " + error.message;
-      return;
-    }
-
-    dataStatus.textContent = `Read live from Supabase as ${session.user.email} -- ${count} total rows, first 5 shown:`;
-    dataRows.innerHTML = data.map(r =>
-      `<tr><td>${r.ad_budget}</td><td>${r.num_leads}</td><td>${r.closed}</td><td>${r.purchased}</td><td>${r.upsell}</td></tr>`
-    ).join("");
-    dataTable.hidden = false;
   }
 
   loginForm.addEventListener("submit", async (e) => {
@@ -273,14 +671,180 @@
 
   const predictBtn = document.getElementById("predict-btn");
   const predictResult = document.getElementById("predict-result");
-  const featureIds = [
-    "ad_budget", "num_leads", "leads_answered", "leads_not_answered",
-    "followup_1", "followup_2", "followup_3", "followup_4", "followup_5",
-    "not_closed", "closed", "calls_to_closed", "calls_to_not_closed",
-    "customer_acquisition_cost", "purchased",
-  ];
+  const ltvPlaceholder = document.getElementById("ltv-placeholder");
+  const purchasedGroup = document.getElementById("f_purchased_group");
+
+  document.getElementById("ltv-info-btn").addEventListener("click", () => {
+    const pop = document.getElementById("ltv-info-pop");
+    pop.hidden = !pop.hidden;
+  });
+
+  purchasedGroup.querySelectorAll(".toggle-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      purchasedGroup.querySelectorAll(".toggle-btn").forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      purchasedGroup.dataset.value = btn.dataset.val;
+    });
+  });
+
+  // Compact proportional bars (no axes/gridlines) -- a line chart compressed the
+  // 19->7 decline visually; bar height now scales directly with the value.
+  function renderFunnelBars(values) {
+    const W = 400, H = 74, padX = 26, top = 20, bottom = 48, barW = 19;
+    const maxV = Math.max(...values, 1);
+    const step = (W - padX * 2) / (values.length - 1);
+    const xFor = (i) => padX + i * step;
+    const heightFor = (v) => Math.max(4, (v / maxV) * (bottom - top));
+    const bars = values.map((v, i) => {
+      const h = heightFor(v);
+      return `<rect x="${(xFor(i) - barW / 2).toFixed(1)}" y="${(bottom - h).toFixed(1)}" width="${barW}" height="${h.toFixed(1)}" rx="4" fill="#2f6bff"/>`;
+    }).join("");
+    const valueLabels = values.map((v, i) => `<text x="${xFor(i)}" y="${(bottom - heightFor(v) - 6).toFixed(1)}" text-anchor="middle" font-family="Manrope, sans-serif" font-size="11" font-weight="700" fill="#47536b">${v}</text>`).join("");
+    const stageLabels = values.map((v, i) => `<text x="${xFor(i)}" y="${bottom + 16}" text-anchor="middle" font-family="Manrope, sans-serif" font-size="10" fill="#a3acbd">F/U ${i + 1}</text>`).join("");
+    return `<svg class="mini-chart" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
+      ${bars}${valueLabels}${stageLabels}
+    </svg>`;
+  }
+
+  // Two proportional bars on one shared scale -- clearer magnitude than two points
+  // on an unlabeled track. Gray = typical, FunnelIQ blue = predicted.
+  function renderBenchmarkBars(typical, predicted) {
+    const W = 400, H = 70, barLeft = 90, barRight = 340, rowH = 20, y1 = 12, y2 = 42;
+    const domainMax = Math.max(typical, predicted) * 1.15;
+    const wFor = (v) => Math.max(3, (v / domainMax) * (barRight - barLeft));
+    const typicalW = wFor(typical), predictedW = wFor(predicted);
+    return `<svg class="benchmark-bar" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
+      <text x="0" y="${y1 + 14}" font-family="Manrope, sans-serif" font-size="12" fill="#8993a8">Typical</text>
+      <rect x="${barLeft}" y="${y1}" width="${typicalW.toFixed(1)}" height="${rowH}" rx="6" fill="#dbe2ea"/>
+      <text x="${(barLeft + typicalW + 8).toFixed(1)}" y="${y1 + 15}" font-family="Manrope, sans-serif" font-size="12" font-weight="700" fill="#47536b">${typical} mo.</text>
+      <text x="0" y="${y2 + 14}" font-family="Manrope, sans-serif" font-size="12" font-weight="700" fill="#1e3a8a">Predicted</text>
+      <rect x="${barLeft}" y="${y2}" width="${predictedW.toFixed(1)}" height="${rowH}" rx="6" fill="#2f6bff"/>
+      <text x="${(barLeft + predictedW + 8).toFixed(1)}" y="${y2 + 15}" font-family="Manrope, sans-serif" font-size="12" font-weight="700" fill="#1e3a8a">${predicted} mo.</text>
+    </svg>`;
+  }
+
+  // A true 0-100% linear scale with two markers on one track (not a gauge) --
+  // fits a probability that's inherently a comparison against a baseline rate.
+  // Both marker positions are computed from the same xFor() mapping, so they
+  // share one real scale rather than being placed by eye.
+  function renderProbabilityBenchmark(prediction, benchmark, valueLabel, benchmarkLabel) {
+    const W = 400, H = 84, trackY = 44, trackLeft = 22, trackRight = 378;
+    const clamp = (v) => Math.max(0, Math.min(100, v));
+    const pred = clamp(prediction), base = clamp(benchmark);
+    const xFor = (v) => trackLeft + (v / 100) * (trackRight - trackLeft);
+    const baseX = xFor(base), predX = xFor(pred);
+    const segLeft = Math.min(baseX, predX), segRight = Math.max(baseX, predX);
+    const baseLabelText = `${benchmarkLabel} · ${base}%`;
+    const predLabelText = `${valueLabel} · ${pred}%`;
+    // Prediction label always above the track, purchaser-average label always
+    // below -- a fixed asymmetry (not distance-based staggering) so the two
+    // markers stay easy to tell apart regardless of how close the values are.
+    return `<svg class="prob-benchmark" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
+      <line x1="${trackLeft}" y1="${trackY}" x2="${trackRight}" y2="${trackY}" stroke="#e2e6ed" stroke-width="6.5" stroke-linecap="round"/>
+      <line x1="${segLeft.toFixed(1)}" y1="${trackY}" x2="${segRight.toFixed(1)}" y2="${trackY}" stroke="#2f6bff" stroke-width="6.5" stroke-linecap="round"/>
+      <text x="${trackLeft}" y="${trackY + 26}" text-anchor="start" font-family="Manrope, sans-serif" font-size="10" fill="#a3acbd">0%</text>
+      <text x="${trackRight}" y="${trackY + 26}" text-anchor="end" font-family="Manrope, sans-serif" font-size="10" fill="#a3acbd">100%</text>
+      <circle cx="${baseX.toFixed(1)}" cy="${trackY}" r="5" fill="#ffffff" stroke="#64748b" stroke-width="2.5"/>
+      <text x="${baseX.toFixed(1)}" y="${trackY + 26}" text-anchor="middle" font-family="Manrope, sans-serif" font-size="11" font-weight="600" fill="#64748b">${baseLabelText}</text>
+      <circle cx="${predX.toFixed(1)}" cy="${trackY}" r="10" fill="#2f6bff" fill-opacity="0.15"/>
+      <circle cx="${predX.toFixed(1)}" cy="${trackY}" r="7" fill="#2f6bff" stroke="#ffffff" stroke-width="2"/>
+      <text x="${predX.toFixed(1)}" y="${trackY - 22}" text-anchor="middle" font-family="Manrope, sans-serif" font-size="11" font-weight="700" fill="#1e3a8a">${predLabelText}</text>
+    </svg>`;
+  }
+
+  // Shared controller for a Campaign Context / Funnel Progression / Conversion section --
+  // Customer Lifetime and Upsell Likelihood use identical inputs, derivations, and
+  // validation, so both tiles are wired through this one implementation instead of two
+  // copies. Validated against the real dataset (funnel_marketing_data.csv):
+  // closed+not_closed==followup_5 holds for 100% of rows, followup_1<=leads_answered
+  // holds for 100%, and each follow-up stage is non-increasing for 100% of rows.
+  function createFunnelSection(cfg) {
+    const budgetInput = document.getElementById(cfg.budget);
+    const totalLeadsInput = document.getElementById(cfg.totalLeads);
+    const leadsAnsweredInput = document.getElementById(cfg.leadsAnswered);
+    const followupInputs = cfg.followups.map((id) => document.getElementById(id));
+    const closedInput = document.getElementById(cfg.closed);
+    const callsToClosedInput = document.getElementById(cfg.callsToClosed);
+    const callsToNotClosedInput = document.getElementById(cfg.callsToNotClosed);
+    const cacInput = document.getElementById(cfg.cac);
+    const errorEl = document.getElementById(cfg.error);
+    const btnEl = document.getElementById(cfg.button);
+    const trendEl = document.getElementById(cfg.trend);
+    const retentionEl = document.getElementById(cfg.retention);
+    const answerDerivedEl = document.getElementById(cfg.answerDerived);
+    const conversionDerivedEl = document.getElementById(cfg.conversionDerived);
+
+    function update() {
+      const budget = Number(budgetInput.value);
+      const totalLeads = Number(totalLeadsInput.value);
+      const leadsAnswered = Number(leadsAnsweredInput.value);
+      const followups = followupInputs.map((el) => Number(el.value));
+      const closed = Number(closedInput.value);
+      const callsToClosed = Number(callsToClosedInput.value);
+      const callsToNotClosed = Number(callsToNotClosedInput.value);
+      const cac = Number(cacInput.value);
+
+      trendEl.innerHTML = renderFunnelBars(followups);
+      retentionEl.textContent = followups[0] > 0
+        ? `${Math.round((followups[4] / followups[0]) * 100)}% reach Follow-up 5`
+        : "";
+      leadsAnsweredInput.max = Math.max(totalLeads, 0);
+
+      const allValues = [budget, totalLeads, leadsAnswered, ...followups, closed, callsToClosed, callsToNotClosed, cac];
+      let error = "";
+      if (allValues.some((v) => v < 0)) {
+        error = "Values can't be negative.";
+      } else if (totalLeads === 0) {
+        error = "Total campaign leads must be greater than 0.";
+      } else if (leadsAnswered > totalLeads) {
+        error = "Leads answered can't exceed total campaign leads.";
+      } else if (followups[0] > leadsAnswered) {
+        error = "Follow-up 1 can't exceed leads answered.";
+      } else if (followups.some((v, i) => i > 0 && v > followups[i - 1])) {
+        error = "Each follow-up stage can't exceed the previous stage.";
+      } else if (closed > followups[4]) {
+        error = "Deals closed can't exceed Follow-up 5 reached.";
+      }
+
+      if (error) {
+        errorEl.textContent = error;
+        btnEl.disabled = true;
+        answerDerivedEl.textContent = "";
+        conversionDerivedEl.textContent = "";
+        return null;
+      }
+      errorEl.textContent = "";
+      btnEl.disabled = false;
+
+      const notAnswered = totalLeads - leadsAnswered;
+      const answerRate = Math.round((leadsAnswered / totalLeads) * 100);
+      answerDerivedEl.textContent = `${notAnswered} not answered · ${answerRate}% answer rate`;
+
+      const notClosed = followups[4] - closed;
+      conversionDerivedEl.textContent = `${notClosed} deals not closed (of ${followups[4]} reaching Follow-up 5)`;
+
+      return { budget, totalLeads, leadsAnswered, notAnswered, followups, closed, notClosed, callsToClosed, callsToNotClosed, cac };
+    }
+
+    [budgetInput, totalLeadsInput, leadsAnsweredInput, ...followupInputs, closedInput, callsToClosedInput, callsToNotClosedInput, cacInput]
+      .forEach((el) => el.addEventListener("input", update));
+    update();
+    return update;
+  }
+
+  const updateLtvDerived = createFunnelSection({
+    budget: "f_ad_budget", totalLeads: "f_num_leads", leadsAnswered: "f_leads_answered",
+    followups: ["f_followup_1", "f_followup_2", "f_followup_3", "f_followup_4", "f_followup_5"],
+    closed: "f_closed", callsToClosed: "f_calls_to_closed", callsToNotClosed: "f_calls_to_not_closed", cac: "f_customer_acquisition_cost",
+    error: "ltv-error", button: "predict-btn", trend: "ltv-funnel-trend", retention: "ltv-retention-derived",
+    answerDerived: "ltv-answer-derived", conversionDerived: "ltv-conversion-derived",
+  });
 
   predictBtn.addEventListener("click", async () => {
+    const derived = updateLtvDerived();
+    if (!derived) return;
+
+    ltvPlaceholder.hidden = true;
     predictResult.hidden = false;
     predictResult.textContent = "Predicting...";
 
@@ -290,10 +854,24 @@
       return;
     }
 
-    const payload = {};
-    for (const id of featureIds) {
-      payload[id] = Number(document.getElementById("f_" + id).value);
-    }
+    const purchased = Number(purchasedGroup.dataset.value);
+    const payload = {
+      ad_budget: derived.budget,
+      num_leads: derived.totalLeads,
+      leads_answered: derived.leadsAnswered,
+      leads_not_answered: derived.notAnswered,
+      followup_1: derived.followups[0],
+      followup_2: derived.followups[1],
+      followup_3: derived.followups[2],
+      followup_4: derived.followups[3],
+      followup_5: derived.followups[4],
+      not_closed: derived.notClosed,
+      closed: derived.closed,
+      calls_to_closed: derived.callsToClosed,
+      calls_to_not_closed: derived.callsToNotClosed,
+      customer_acquisition_cost: derived.cac,
+      purchased: purchased,
+    };
 
     const resp = await fetch("/predict/ltv", {
       method: "POST",
@@ -311,21 +889,55 @@
     }
 
     const result = await resp.json();
+    const predicted = result.predicted_ltv_months;
+    const typical = 21;
+    const diff = predicted - typical;
+    let compareHtml;
+    if (Math.abs(diff) < 1) {
+      compareHtml = "&#8776; In line with the typical customer";
+    } else if (diff > 0) {
+      compareHtml = `&#9650; ${diff.toFixed(1)} months above typical`;
+    } else {
+      compareHtml = `&#9660; ${Math.abs(diff).toFixed(1)} months below typical`;
+    }
+
     predictResult.innerHTML =
-      `Predicted lifetime: <span class="value">${result.predicted_ltv_months} months</span>` +
-      ` <span style="color: var(--muted); font-size: 12px;">(${result.model})</span>`;
+      `<div class="lifetime-hero">
+         <div class="lifetime-label">PREDICTED LIFETIME</div>
+         <div class="lifetime-value">${predicted}</div>
+         <div class="lifetime-unit">months</div>
+       </div>
+       <div class="lifetime-compare">${compareHtml}</div>` +
+      renderBenchmarkBars(typical, predicted) +
+      `<div class="driver-section">
+         <div class="driver-title">KEY SIGNAL</div>
+         <div class="key-signal-value">Avg. calls to close: ${derived.callsToClosed}</div>
+         <div class="key-signal-note">Faster-closing customers tend to have longer lifetimes.</div>
+       </div>`;
   });
 
   const upsellBtn = document.getElementById("upsell-btn");
   const upsellResult = document.getElementById("upsell-result");
-  const upsellFeatureIds = [
-    "ad_budget", "num_leads", "leads_answered", "leads_not_answered",
-    "followup_1", "followup_2", "followup_3", "followup_4", "followup_5",
-    "not_closed", "closed", "calls_to_closed", "calls_to_not_closed",
-    "customer_acquisition_cost",
-  ];
+  const upsellPlaceholder = document.getElementById("upsell-placeholder");
+
+  document.getElementById("upsell-info-btn").addEventListener("click", () => {
+    const pop = document.getElementById("upsell-info-pop");
+    pop.hidden = !pop.hidden;
+  });
+
+  const updateUpsellDerived = createFunnelSection({
+    budget: "u_ad_budget", totalLeads: "u_num_leads", leadsAnswered: "u_leads_answered",
+    followups: ["u_followup_1", "u_followup_2", "u_followup_3", "u_followup_4", "u_followup_5"],
+    closed: "u_closed", callsToClosed: "u_calls_to_closed", callsToNotClosed: "u_calls_to_not_closed", cac: "u_customer_acquisition_cost",
+    error: "upsell-error", button: "upsell-btn", trend: "upsell-funnel-trend", retention: "upsell-retention-derived",
+    answerDerived: "upsell-answer-derived", conversionDerived: "upsell-conversion-derived",
+  });
 
   upsellBtn.addEventListener("click", async () => {
+    const derived = updateUpsellDerived();
+    if (!derived) return;
+
+    upsellPlaceholder.hidden = true;
     upsellResult.hidden = false;
     upsellResult.textContent = "Predicting...";
 
@@ -335,10 +947,22 @@
       return;
     }
 
-    const payload = {};
-    for (const id of upsellFeatureIds) {
-      payload[id] = Number(document.getElementById("u_" + id).value);
-    }
+    const payload = {
+      ad_budget: derived.budget,
+      num_leads: derived.totalLeads,
+      leads_answered: derived.leadsAnswered,
+      leads_not_answered: derived.notAnswered,
+      followup_1: derived.followups[0],
+      followup_2: derived.followups[1],
+      followup_3: derived.followups[2],
+      followup_4: derived.followups[3],
+      followup_5: derived.followups[4],
+      not_closed: derived.notClosed,
+      closed: derived.closed,
+      calls_to_closed: derived.callsToClosed,
+      calls_to_not_closed: derived.callsToNotClosed,
+      customer_acquisition_cost: derived.cac,
+    };
 
     const resp = await fetch("/predict/upsell", {
       method: "POST",
@@ -357,17 +981,100 @@
 
     const result = await resp.json();
     const pct = Math.round(result.upsell_probability * 100);
-    const label = result.predicted_upsell ? "Likely to upsell" : "Unlikely to upsell";
+    // predicted_upsell is the model's own >=0.5 classification (app/main.py) --
+    // a real threshold, not a UI-invented band.
+    const qualLabel = result.predicted_upsell ? "Likely to upsell" : "Unlikely to upsell";
+    const baseline = 46;
+    const diff = pct - baseline;
+    let compareHtml;
+    if (Math.abs(diff) < 1) {
+      compareHtml = "&#8776; In line with purchaser average";
+    } else if (diff > 0) {
+      compareHtml = `+${diff} pp vs purchaser average`;
+    } else {
+      compareHtml = `${diff} pp vs purchaser average`;
+    }
+
     upsellResult.innerHTML =
-      `${label}: <span class="value">${pct}%</span> probability` +
-      ` <span style="color: var(--muted); font-size: 12px;">(${result.model})</span>`;
+      `<div class="lifetime-hero">
+         <div class="lifetime-label">UPSELL PROBABILITY</div>
+         <div class="lifetime-value">${pct}%</div>
+       </div>
+       <div class="qual-label">${qualLabel}</div>` +
+      renderProbabilityBenchmark(pct, baseline, "Prediction", "Purchaser average") +
+      `<div class="lifetime-compare" style="font-size:12.5px; font-weight:600;">${compareHtml}</div>` +
+      `<div class="driver-section">
+         <div class="driver-title">KEY SIGNALS</div>
+         <div class="driver-row"><span>Avg. calls to close</span><span>${derived.callsToClosed}</span></div>
+         <div class="driver-row"><span>Acquisition cost</span><span>₪${derived.cac.toLocaleString()}</span></div>
+         <div class="key-signal-note" style="margin-top:6px;">Faster, lower-cost conversions are associated with higher upsell likelihood.</div>
+       </div>`;
   });
 
   const superBtn = document.getElementById("super-btn");
   const superResult = document.getElementById("super-result");
-  const superFeatureIds = ["ad_budget", "num_leads", "leads_answered", "leads_not_answered"];
+  const superPlaceholder = document.getElementById("super-placeholder");
+  const superDerived = document.getElementById("super-derived");
+  const superError = document.getElementById("super-error");
+  const superBudgetInput = document.getElementById("s_ad_budget");
+  const superTotalLeadsInput = document.getElementById("s_num_leads");
+  const superLeadsAnsweredInput = document.getElementById("s_leads_answered");
+
+  document.getElementById("super-info-btn").addEventListener("click", () => {
+    const pop = document.getElementById("super-info-pop");
+    pop.hidden = !pop.hidden;
+  });
+
+  // UI-only display bands over the raw 0-100 score -- the model itself has no
+  // calibrated categories (checked app/main.py: /predict/super_customer returns
+  // only a raw probability*100, nothing else). These thresholds are a plain,
+  // disclosed judgment call, not a property of the trained model.
+  function superScoreBand(score) {
+    if (score >= 70) return { label: "HIGH POTENTIAL", tier: "High" };
+    if (score >= 40) return { label: "MODERATE POTENTIAL", tier: "Moderate" };
+    return { label: "LOW POTENTIAL", tier: "Low" };
+  }
+
+  function updateSuperDerived() {
+    const budget = Number(superBudgetInput.value);
+    const total = Number(superTotalLeadsInput.value);
+    const answered = Number(superLeadsAnsweredInput.value);
+    superLeadsAnsweredInput.max = Math.max(total, 0);
+
+    let error = "";
+    if (budget < 0 || total < 0 || answered < 0) {
+      error = "Values can't be negative.";
+    } else if (total === 0) {
+      error = "Total campaign leads must be greater than 0.";
+    } else if (answered > total) {
+      error = "Leads answered can't exceed total campaign leads.";
+    }
+
+    if (error) {
+      superError.textContent = error;
+      superBtn.disabled = true;
+      superDerived.textContent = "";
+      return null;
+    }
+    superError.textContent = "";
+    superBtn.disabled = false;
+
+    const notAnswered = total - answered;
+    const answerRate = Math.round((answered / total) * 100);
+    superDerived.textContent = `${notAnswered} not answered · ${answerRate}% answer rate`;
+    return { total, answered, notAnswered, answerRate };
+  }
+
+  superBudgetInput.addEventListener("input", updateSuperDerived);
+  superTotalLeadsInput.addEventListener("input", updateSuperDerived);
+  superLeadsAnsweredInput.addEventListener("input", updateSuperDerived);
+  updateSuperDerived();
 
   superBtn.addEventListener("click", async () => {
+    const derived = updateSuperDerived();
+    if (!derived) return;
+
+    superPlaceholder.hidden = true;
     superResult.hidden = false;
     superResult.textContent = "Scoring...";
 
@@ -377,10 +1084,13 @@
       return;
     }
 
-    const payload = {};
-    for (const id of superFeatureIds) {
-      payload[id] = Number(document.getElementById("s_" + id).value);
-    }
+    const budget = Number(superBudgetInput.value);
+    const payload = {
+      ad_budget: budget,
+      num_leads: derived.total,
+      leads_answered: derived.answered,
+      leads_not_answered: derived.notAnswered,
+    };
 
     const resp = await fetch("/predict/super_customer", {
       method: "POST",
@@ -398,33 +1108,36 @@
     }
 
     const result = await resp.json();
+    const band = superScoreBand(result.super_customer_score);
     superResult.innerHTML =
-      `Super customer score: <span class="value">${result.super_customer_score}</span> / 100` +
-      ` <span style="color: var(--muted); font-size: 12px;">(${result.model})</span>`;
+      renderScoreGauge(result.super_customer_score, "out of 100", 16, band.label) +
+      `<div class="score-gauge-caption sub" style="margin-bottom:0;">${band.tier} likelihood of becoming a high-value, long-term customer.</div>` +
+      `<div class="driver-section">
+         <div class="driver-title">Signals used in this score</div>
+         <div class="driver-row"><span>Campaign budget</span><span>₪${budget.toLocaleString()}</span></div>
+         <div class="driver-row"><span>Answer rate</span><span>${derived.answerRate}%</span></div>
+         <div class="driver-row"><span>Campaign volume</span><span>${derived.total} leads</span></div>
+       </div>`;
   });
 
-  const simulateBtn = document.getElementById("simulate-btn");
   const simulateStatus = document.getElementById("simulate-status");
   const simulateChart = document.getElementById("simulate-chart");
   const simulateRecommendation = document.getElementById("simulate-recommendation");
 
   const strategies = [
-    { label: "2×20k + 1×10k", campaigns: [{ ad_budget: 20000, count: 2 }, { ad_budget: 10000, count: 1 }] },
-    { label: "10×5k", campaigns: [{ ad_budget: 5000, count: 10 }] },
-    { label: "25×2k", campaigns: [{ ad_budget: 2000, count: 25 }] },
-    { label: "100×500", campaigns: [{ ad_budget: 500, count: 100 }] },
+    { label: "2 × ₪20,000 + 1 × ₪10,000", xLabel1: "3 campaigns", xLabel2: "2 × ₪20K + 1 × ₪10K", campaigns: [{ ad_budget: 20000, count: 2 }, { ad_budget: 10000, count: 1 }] },
+    { label: "10 × ₪5,000", xLabel1: "10 campaigns", xLabel2: "₪5K each", campaigns: [{ ad_budget: 5000, count: 10 }] },
+    { label: "25 × ₪2,000", xLabel1: "25 campaigns", xLabel2: "₪2K each", campaigns: [{ ad_budget: 2000, count: 25 }] },
+    { label: "100 × ₪500", xLabel1: "100 campaigns", xLabel2: "₪500 each", campaigns: [{ ad_budget: 500, count: 100 }] },
   ];
 
-  simulateBtn.addEventListener("click", async () => {
+  // Runs automatically once the dashboard loads -- these 4 strategies are
+  // fixed (no user input), so there's nothing for a "Compare" button to
+  // gate; it's a dashboard widget, not a form.
+  async function runBudgetSimulation(session) {
     simulateStatus.textContent = "Simulating all 4 strategies...";
     simulateChart.hidden = true;
     simulateRecommendation.hidden = true;
-
-    const { data: { session } } = await supabaseClient.auth.getSession();
-    if (!session) {
-      simulateStatus.textContent = "Not signed in.";
-      return;
-    }
 
     const results = [];
     for (const s of strategies) {
@@ -446,28 +1159,15 @@
     }
 
     simulateStatus.textContent = "";
-    const maxProfit = Math.max(...results.map(r => r.profit));
     const winner = results.reduce((a, b) => (b.profit > a.profit ? b : a));
 
-    simulateChart.innerHTML = results.map(r => {
-      const pct = Math.max(2, (r.profit / maxProfit) * 100);
-      const isWinner = r.label === winner.label;
-      return `
-        <div class="strategy-row">
-          <div class="dropout-label" style="width:150px;">${r.label}</div>
-          <div class="strategy-track"><div class="strategy-fill${isWinner ? " winner" : ""}" style="width:${pct}%"></div></div>
-          <div class="strategy-value">₪${r.profit.toLocaleString()}</div>
-        </div>`;
-    }).join("");
+    simulateChart.innerHTML = renderStrategyChart(strategies, results);
     simulateChart.hidden = false;
 
     simulateRecommendation.innerHTML =
-      `<b>Best strategy: ${winner.label}</b> — expected total profit ₪${winner.profit.toLocaleString()} ` +
-      `for the same ₪50,000 spend. Neither concentrating into a few large campaigns nor spreading ` +
-      `into the smallest ones wins — the ₪2,000–5,000 budget range converts and profits far better ` +
-      `per shekel than anything outside it.`;
+      `<b>Best strategy: ${winner.label}</b> — Mid-range campaign budgets produce the highest expected profit.`;
     simulateRecommendation.hidden = false;
-  });
+  }
 
   signoutBtn.addEventListener("click", async () => {
     await supabaseClient.auth.signOut();

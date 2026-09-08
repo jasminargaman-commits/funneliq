@@ -25,6 +25,7 @@ import pandas as pd
 from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, Header, HTTPException
 from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 load_dotenv()
@@ -37,6 +38,7 @@ SUPABASE_URL = os.environ.get("SUPABASE_URL")
 SUPABASE_ANON_KEY = os.environ.get("SUPABASE_ANON_KEY")
 
 app = FastAPI(title="FunnelIQ API")
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 _ltv_model = joblib.load(MODELS_DIR / "ltv_regressor.pkl")
 _ltv_meta = json.loads((MODELS_DIR / "ltv_regressor_meta.json").read_text())
