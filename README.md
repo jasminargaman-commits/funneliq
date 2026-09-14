@@ -2,9 +2,9 @@
 
 Marketing-intelligence tool for Northbound Media's funnel data — first of three final projects. Full brief: [`FunnelIQ_Assignment.html`](./FunnelIQ_Assignment.html).
 
-**Status: all six work packages complete.** Architecture and leakage decisions are locked, this repo is live on GitHub, a Supabase project is provisioned with `schema.sql` applied and real data loaded (3,490 rows, deduped), a minimal Railway skeleton is deployed and auto-deploying on every push to `main`, a working Supabase Auth login screen is live, Packages 2 (LTV regression), 3 (upsell classification), 4 (super-customer score), and 6 (budget optimization) are trained, compared, and **live in the app**, and Package 5 (follow-up dropout analysis) is done with its findings surfaced as a dashboard panel. Remaining: GitHub Actions CI and the optional demo recording.
+**Status: complete.** All six work packages are done. Architecture and leakage decisions are locked, this repo is live on GitHub with CI (`.github/workflows/ci.yml`) running on every push and PR, a Supabase project is provisioned with `schema.sql` applied and real data loaded (3,490 rows, deduped), a Railway deployment auto-deploys on every push to `main`, a working Supabase Auth login screen is live, Packages 2 (LTV regression), 3 (upsell classification), 4 (super-customer score), and 6 (budget optimization) are trained, compared, and **live in the app**, and Package 5 (follow-up dropout analysis) is done with its findings surfaced as a dashboard panel. A short demo recording and a slide deck (see below) round out the submission.
 
-**[Read `REPORT.md`](./REPORT.md) for the findings and business recommendations** — the short version of everything below.
+**[Read `REPORT.md`](./REPORT.md) for the findings and business recommendations** — the short version of everything below. **[Open the decision deck](./funneliq-decision-deck.html)** ([PDF](./FunnelIQ-Decision-Record.pdf)) for the process walkthrough — architecture, leakage reasoning, model results, and what's next.
 
 Repo: https://github.com/jasminargaman-commits/funneliq
 
